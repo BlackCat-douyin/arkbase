@@ -447,6 +447,14 @@
             border-radius: 8px;
             margin-left: 4px;
         }
+        .op-meta .elite-tag {
+            background: rgba(255, 215, 0, 0.15);
+            color: #ffd700;
+            padding: 0 6px;
+            border-radius: 8px;
+            margin-left: 4px;
+            font-size: 0.6rem;
+        }
 
         .op-tag {
             font-size: 0.5rem;
@@ -745,7 +753,7 @@
 
 
         // =====================================================================
-        //  干员数据（已修正职业和单挂黑名单）
+        //  干员数据（已修正职业、单挂黑名单）
         // =====================================================================
 
         const FIXED_ONLY_OPS = new Set([
@@ -760,7 +768,7 @@
         const SINGLE_HANG_FORBIDDEN = new Set([
             "卡夫卡", "柏喙", "贝洛内", "德克萨斯", "拉普兰德",
             "孑", "明椒", "摩根", "推进之王", "琳琅诗怀雅", "崖心", "折光",
-            "红云"   // 新增红云
+            "红云"
         ]);
 
         const AVATAR_BASE = 'https://raw.githubusercontent.com/Aceship/Arknight-Images/main/avatars/';
@@ -768,12 +776,12 @@
         const OPERATORS = {
             // 制造站 - 赤金
             "清流": { facility: "制造站", product: "赤金", type: "自动化", base: 0.25, combo: { "自动化": 2 },
-            combo_bonus: 0.25, star: 4, class: "医疗", avatar: AVATAR_BASE + 'char_282_clears.png' }, // 修正为医疗
+            combo_bonus: 0.25, star: 4, class: "医疗", avatar: AVATAR_BASE + 'char_282_clears.png' },
             "温蒂": { facility: "制造站", product: "通用", type: "自动化", base: 0.20, combo: { "自动化": 2 },
             combo_bonus: 0.10, star: 6, class: "特种", avatar: AVATAR_BASE + 'char_202_wendy.png' },
             "森蚺": { facility: "制造站", product: "通用", type: "自动化", base: 0.20, combo: { "自动化": 2 },
             combo_bonus: 0.10, star: 6, class: "重装", avatar: AVATAR_BASE + 'char_216_tomimi.png' },
-            "冬时": { facility: "制造站", product: "赤金", type: "自动化", base: 0.20, star: 4, class: "先锋" }, // 修正为先锋
+            "冬时": { facility: "制造站", product: "赤金", type: "自动化", base: 0.20, star: 4, class: "先锋" },
             "异客": { facility: "制造站", product: "通用", type: "自动化", base: 0.20, combo: { "自动化": 2 },
             combo_bonus: 0.05, star: 6, class: "术师" },
             "砾": { facility: "制造站", product: "赤金", type: "常规", base: 0.35, star: 4, class: "特种",
@@ -788,11 +796,11 @@
             "淬羽赫默": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 5, class: "医疗" },
             "阿罗玛": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 5, class: "术师" },
             "杏仁": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 5, class: "特种" },
-            "涤火杰西卡": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 6, class: "狙击" },
+            "涤火杰西卡": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 6, class: "重装" },
             "多萝西": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 6, class: "特种",
             avatar: AVATAR_BASE + 'char_???_dorothy.png' },
             "娜斯提": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 5, class: "近卫" },
-            "引星棘刺": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 6, class: "近卫" },
+            "引星棘刺": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 6, class: "特种" },
             "温米": { facility: "制造站", product: "赤金", type: "常规", base: 0.25, star: 5, class: "术师" },
 
             // 制造站 - 通用
@@ -812,7 +820,7 @@
             "泡普卡": { facility: "制造站", product: "通用", type: "常规", base: 0.20, star: 3, class: "近卫" },
             "石棉": { facility: "制造站", product: "通用", type: "常规", base: 0.20, star: 5, class: "重装",
             avatar: AVATAR_BASE + 'char_???_asbestosis.png' },
-            "裁度": { facility: "制造站", product: "通用", type: "常规", base: 0.20, star: 4, class: "近卫" },
+            "裁度": { facility: "制造站", product: "通用", type: "常规", base: 0.20, star: 4, class: "特种" },
             "芬": { facility: "制造站", product: "通用", type: "常规", base: 0.20, star: 3, class: "先锋",
             avatar: AVATAR_BASE + 'char_???_fang.png' },
             "克洛斯": { facility: "制造站", product: "通用", type: "常规", base: 0.20, star: 3, class: "狙击",
@@ -832,7 +840,7 @@
             avatar: AVATAR_BASE + 'char_???_red.png' },
             "酒神": { facility: "制造站", product: "经验", type: "经验专精", base: 0.32, star: 6, class: "辅助" },
             "Miss.Christine": { facility: "制造站", product: "经验", type: "经验专精", base: 0.30, star: 5,
-            class: "术师" }, // 修正为术师
+            class: "术师" },
             "卡达": { facility: "制造站", product: "经验", type: "经验专精", base: 0.25, star: 4, class: "术师" },
             "豆苗": { facility: "制造站", product: "经验", type: "经验专精", base: 0.20, star: 4, class: "先锋",
             avatar: AVATAR_BASE + 'char_???_beanstalk.png' },
@@ -840,10 +848,10 @@
             avatar: AVATAR_BASE + 'char_???_noir_corne.png' },
             "蛇屠箱": { facility: "制造站", product: "经验", type: "经验专精", base: 0.20, star: 4, class: "重装",
             avatar: AVATAR_BASE + 'char_???_cuora.png' },
-            "怒潮凛冬": { facility: "制造站", product: "经验", type: "常规", base: 0.30, star: 6, class: "近卫" }, // 修正为近卫
+            "怒潮凛冬": { facility: "制造站", product: "经验", type: "常规", base: 0.30, star: 6, class: "近卫" },
             "裂响": { facility: "制造站", product: "经验", type: "常规", base: 0.28, star: 5, class: "术师" },
             "弑君者": { facility: "制造站", product: "经验", type: "常规", base: 0.30, star: 5, class: "特种" },
-            "机械师": { facility: "制造站", product: "经验", type: "常规", base: 0.25, star: 6, class: "重装" }, // 修正为重装
+            "机械师": { facility: "制造站", product: "经验", type: "常规", base: 0.25, star: 6, class: "重装" },
             "白雪": { facility: "制造站", product: "经验", type: "常规", base: 0.20, star: 4, class: "狙击",
             avatar: AVATAR_BASE + 'char_???_shirayuki.png' },
             "霜叶": { facility: "制造站", product: "经验", type: "常规", base: 0.20, star: 4, class: "近卫",
@@ -899,7 +907,7 @@
             "伺夜": { facility: "贸易站", product: "通用", type: "常规", base: 0.30, star: 6, class: "先锋" },
             "空弦": { facility: "贸易站", product: "通用", type: "常规", base: 0.25, star: 6, class: "狙击" },
             "深巡": { facility: "贸易站", product: "通用", type: "常规", base: 0.25, star: 5, class: "重装" },
-            "吉星": { facility: "贸易站", product: "通用", type: "常规", base: 0.25, star: 5, class: "近卫" },
+            "吉星": { facility: "贸易站", product: "通用", type: "常规", base: 0.25, star: 5, class: "狙击" },
             "石英": { facility: "贸易站", product: "通用", type: "常规", base: 0.25, star: 4, class: "近卫" },
             "维娜·维多利亚": { facility: "贸易站", product: "通用", type: "常规", base: 0.20, star: 6, class: "近卫" },
             "空爆": { facility: "贸易站", product: "通用", type: "常规", base: 0.20, star: 3, class: "狙击",
@@ -917,13 +925,36 @@
             "远山": { facility: "贸易站", product: "通用", type: "常规", base: 0.15, star: 4, class: "术师",
             avatar: AVATAR_BASE + 'char_???_gitano.png' },
             "焰狐龙梓兰": { facility: "贸易站", product: "通用", type: "特殊", base: 0.25, star: 6, class: "术师" },
-            "雷狼龙S空爆": { facility: "贸易站", product: "通用", type: "特殊", base: 0.25, star: 5, class: "狙击" },
+            "雷狼龙S空爆": { facility: "贸易站", product: "通用", type: "特殊", base: 0.25, star: 5, class: "近卫" },
             "推进之王": { facility: "贸易站", product: "通用", type: "领导", base: 0.25, star: 6, class: "先锋",
             avatar: AVATAR_BASE + 'char_???_siege.png' },
             "摩根": { facility: "贸易站", product: "通用", type: "领导", base: 0.20, star: 5, class: "近卫",
             avatar: AVATAR_BASE + 'char_???_morgan.png' },
-            "贝洛内": { facility: "贸易站", product: "通用", type: "领导", base: 0.20, star: 6, class: "近卫" }, // 修正为近卫
+            "贝洛内": { facility: "贸易站", product: "通用", type: "领导", base: 0.20, star: 6, class: "近卫" },
         };
+
+        // =====================================================================
+        //  统一设置精英化标签（依据新规则）
+        // =====================================================================
+        for (let name in OPERATORS) {
+            const op = OPERATORS[name];
+            // 先清空已有 elite
+            delete op.elite;
+            const star = op.star;
+            // 四星（除蛇屠箱）精英一
+            if (star === 4 && name !== '蛇屠箱') {
+                op.elite = '精英一';
+            }
+            // 五星和六星（除推进之王、贝娜、薄绿）精英二
+            else if ((star === 5 || star === 6) && !['推进之王', '贝娜', '薄绿'].includes(name)) {
+                op.elite = '精英二';
+            }
+            // 薄绿特殊处理：精英一（虽然它是五星，但我们需要精英一）
+            else if (name === '薄绿') {
+                op.elite = '精英一';
+            }
+            // 推进之王、贝娜不设置 elite（已删除）
+        }
 
         // =====================================================================
         //  组合数据（完全保留）
@@ -1370,7 +1401,7 @@
         }
 
         // =====================================================================
-        //  UI 交互（增加星级和职业筛选）
+        //  UI 交互（增加星级和职业筛选，并显示精英标签）
         // =====================================================================
 
         const FORBIDDEN_IN_333 = new Set(["可露希尔", "但书", "巫恋"]);
@@ -1416,7 +1447,7 @@
             return op.product === '通用' ? '通用' : op.product;
         }
 
-        // 渲染干员卡片（加入星级和职业筛选）
+        // 渲染干员卡片（加入星级和职业筛选，并显示精英标签）
         function renderGrid() {
             const filter = currentFilter;
             const query = searchQuery.trim().toLowerCase();
@@ -1464,6 +1495,7 @@
                 const star = op && op.star ? op.star : 0;
                 const cls = op && op.class ? op.class : '';
                 const starStr = star > 0 ? '★'.repeat(star) : '';
+                const elite = op && op.elite ? op.elite : '';
 
                 let avatarHtml = '';
                 if (avatarUrl) {
@@ -1473,15 +1505,19 @@
                     avatarHtml = `<span class="fallback-text">${initial}</span>`;
                 }
 
+                // 构建 meta 显示：星级 + 职业 + 精英标签
+                let metaParts = [];
+                if (starStr) metaParts.push(`<span class="star">${starStr}</span>`);
+                if (cls) metaParts.push(`<span class="class-tag">${cls}</span>`);
+                if (elite) metaParts.push(`<span class="elite-tag">${elite}</span>`);
+                const metaHtml = metaParts.join('');
+
                 html += `
                         <div class="op-card ${isSelected ? 'selected' : ''} ${isForbidden ? 'disabled' : ''}" data-op="${name}">
                             <span class="check-mark">✓</span>
                             <div class="op-avatar ${colorClass}">${avatarHtml}</div>
                             <div class="op-name">${name}</div>
-                            <div class="op-meta">
-                                ${starStr ? `<span class="star">${starStr}</span>` : ''}
-                                ${cls ? `<span class="class-tag">${cls}</span>` : ''}
-                            </div>
+                            <div class="op-meta">${metaHtml}</div>
                             ${tag ? `<div class="op-tag">${tag}</div>` : ''}
                         </div>
                     `;
