@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>明日方舟基建排版器</title>
+    <style>
+        /* ========== 全局重置 & 方舟主题 ========== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background: #0b0b1a;
+            color: #e8e6e3;
+            padding: 16px 12px 40px;
+            min-height: 100vh;
+            background-image: radial-gradient(ellipse at 50% 0%, #1a1a3e 0%, #0b0b1a 70%);
+        }
+
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 8px; }
+        ::-webkit-scrollbar-thumb { background: rgba(240,196,90,0.4); border-radius: 8px; }
+
+        .app-wrap { max-width: 480px; margin: 0 auto; }
+
+        .header {
+            text-align: center;
+            padding: 8px 0 18px;
+            position: relative;
+        }
+        .header::after {
+            content: "";
+            display: block;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #f0c45a, transparent);
+            margin: 10px auto 0;
+            border-radius: 4px;
+        }
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #f0c45a;
+            letter-spacing: 2px;
+            text-shadow: 0 0 30px rgba(240,196,90,0.15);
+        }
+        .header h1 small {
+            font-size: 0.7rem;
+            font-weight: 400;
+            color: rgba(255,255,255,0.35);
+            display: block;
+            margin-top: 2px;
+        }
+
+        .card {
+            background: rgba(22,33,62,0.75);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 16px;
+            padding: 16px 14px;
+            margin-bottom: 14px;
+            border: 1px solid rgba(255,255,255,0.04);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+        .card-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #f0c45a;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .card-title .badge {
+            background: rgba(240,196,90,0.15);
+            color: #f0c45a;
+            font-size: 0.65rem;
+            padding: 0 10px;
+            border-radius: 20px;
+            font-weight: 400;
+        }
+
+        .layout-group { display: flex; gap: 10px; }
+        .layout-btn {
+            flex: 1;
+            padding: 10px 0;
+            border: 2px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            background: rgba(255,255,255,0.02);
+            color: rgba(255,255,255,0.5);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+            text-align: center;
+            font-family: inherit;
+        }
+        .layout-btn:hover { border-color: rgba(240,196,90,0.3); color: #e8e6e3; }
+        .layout-btn.active {
+            border-color: #f0c45a;
+            background: rgba(240,196,90,0.08);
+            color: #f0c45a;
+            box-shadow: 0 0 20px rgba(240,196,90,0.06);
+        }
+        .layout-btn .sub {
+            display: block;
+            font-size: 0.6rem;
+            font-weight: 400;
+            opacity: 0.5;
+            margin-top: 2px;
+        }
+        .layout-btn.active .sub { opacity: 0.7; }
+
+        .op-search-wrap {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .op-search-wrap input {
+            flex: 1;
+            padding: 8px 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(0,0,0,0.35);
+            color: #e8e6e3;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.25s;
+            font-family: inherit;
+        }
+        .op-search-wrap input::placeholder { color: rgba(255,255,255,0.25); }
+        .op-search-wrap input:focus { border-color: rgba(240,196,90,0.4); }
+        .op-search-wrap .clear-btn {
+            padding: 0 14px;
+            border-radius: 10px;
+            border: none;
+            background: rgba(255,255,255,0.05);
+            color: rgba(255,255,255,0.3);
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .op-search-wrap .clear-btn:hover { background: rgba(255,255,255,0.1); color: #e8e6e3; }
+
+        .filter-tabs {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            padding-bottom: 6px;
+            margin-bottom: 8px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        .filter-tabs::-webkit-scrollbar { display: none; }
+        .filter-tab {
+            flex-shrink: 0;
+            padding: 4px 14px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.06);
+            background: rgba(255,255,255,0.03);
+            color: rgba(255,255,255,0.45);
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            white-space: nowrap;
+        }
+        .filter-tab:hover { color: #e8e6e3; border-color: rgba(255,255,255,0.12); }
+        .filter-tab.active {
+            background: rgba(240,196,90,0.12);
+            border-color: #f0c45a;
+            color: #f0c45a;
+        }
+        .filter-tab .dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            margin-right: 4px;
+            vertical-align: middle;
+        }
+
+        .op-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            max-height: 340px;
+            overflow-y: auto;
+            padding-right: 2px;
+        }
+        @media (max-width: 400px) { .op-grid { grid-template-columns: repeat(2, 1fr); } }
+
+        .op-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 4px 8px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.02);
+            border: 2px solid rgba(255,255,255,0.04);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+            position: relative;
+            min-height: 76px;
+        }
+        .op-card:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.08); }
+        .op-card:active { transform: scale(0.96); }
+        .op-card.selected {
+            border-color: #f0c45a;
+            background: rgba(240,196,90,0.08);
+            box-shadow: 0 0 20px rgba(240,196,90,0.06);
+        }
+        .op-card.selected .op-avatar { box-shadow: 0 0 0 3px rgba(240,196,90,0.3); }
+        .op-card .check-mark {
+            position: absolute;
+            top: 4px;
+            right: 6px;
+            font-size: 0.7rem;
+            color: #f0c45a;
+            opacity: 0;
+            transform: scale(0.6);
+            transition: all 0.2s;
+        }
+        .op-card.selected .check-mark { opacity: 1; transform: scale(1); }
+        .op-card.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            pointer-events: none;
+            filter: grayscale(0.6);
+        }
+
+        .op-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #fff;
+            flex-shrink: 0;
+            transition: box-shadow 0.2s;
+            margin-bottom: 3px;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+            background-size: cover !important;
+            background-position: center !important;
+            background-repeat: no-repeat !important;
+            overflow: hidden;
+            position: relative;
+        }
+        .op-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            display: block;
+        }
+        .op-avatar .fallback-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #fff;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+        }
+
+        .op-name {
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: #c8c6c3;
+            text-align: center;
+            line-height: 1.2;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .op-meta {
+            font-size: 0.55rem;
+            color: rgba(255,255,255,0.3);
+            text-align: center;
+            line-height: 1.3;
+            margin-top: 1px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+        .op-meta .star {
+            color: #f0c45a;
+            letter-spacing: 1px;
+        }
+        .op-meta .class-tag {
+            background: rgba(255,255,255,0.06);
+            padding: 0 6px;
+            border-radius: 8px;
+            margin-left: 4px;
+        }
+
+        .op-tag {
+            font-size: 0.5rem;
+            padding: 1px 8px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.06);
+            color: rgba(255,255,255,0.35);
+            margin-top: 2px;
+            letter-spacing: 0.3px;
+        }
+        .op-card.selected .op-tag { color: rgba(240,196,90,0.6); }
+
+        .color-trade { background: linear-gradient(135deg, #2d5f9e, #4a7fc7); }
+        .color-赤金 { background: linear-gradient(135deg, #c9922a, #f0c45a); }
+        .color-经验 { background: linear-gradient(135deg, #2d7d4a, #4caf7a); }
+        .color-源石 { background: linear-gradient(135deg, #6d2d8a, #9c4dca); }
+        .color-通用 { background: linear-gradient(135deg, #4a4a5a, #7a7a8a); }
+        .color-默认 { background: linear-gradient(135deg, #3a3a4a, #5a5a6a); }
+
+        .op-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255,255,255,0.04);
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .op-stats .count { font-size: 0.8rem; color: rgba(255,255,255,0.5); }
+        .op-stats .count strong { color: #f0c45a; font-weight: 600; }
+        .op-stats .actions { display: flex; gap: 6px; }
+        .op-stats .actions button {
+            padding: 4px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.06);
+            background: rgba(255,255,255,0.04);
+            color: rgba(255,255,255,0.5);
+            font-size: 0.7rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .op-stats .actions button:hover { background: rgba(255,255,255,0.08); color: #e8e6e3; }
+        .op-stats .actions button:active { transform: scale(0.95); }
+
+        .btn-generate {
+            width: 100%;
+            padding: 14px 0;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #e94560, #c23152);
+            color: #fff;
+            font-size: 1.05rem;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.25s;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 24px rgba(233,69,96,0.25);
+        }
+        .btn-generate:hover { transform: translateY(-1px); box-shadow: 0 8px 32px rgba(233,69,96,0.35); }
+        .btn-generate:active { transform: scale(0.97); }
+        .btn-generate:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none;
+        }
+
+        #resultCard { display: none; animation: fadeUp 0.35s ease; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        #result {
+            white-space: pre-wrap;
+            font-size: 0.82rem;
+            line-height: 1.7;
+            color: #c8c6c3;
+            background: rgba(0,0,0,0.25);
+            border-radius: 10px;
+            padding: 12px 14px;
+            border: 1px solid rgba(255,255,255,0.03);
+            max-height: 460px;
+            overflow-y: auto;
+            font-family: "SF Mono", "Menlo", monospace;
+        }
+
+        .empty-state { text-align: center; padding: 28px 0 16px; color: rgba(255,255,255,0.2); font-size: 0.85rem; }
+        .empty-state .icon { font-size: 2rem; display: block; margin-bottom: 6px; opacity: 0.4; }
+
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: rgba(22,33,62,0.95);
+            backdrop-filter: blur(12px);
+            padding: 10px 24px;
+            border-radius: 12px;
+            border: 1px solid rgba(240,196,90,0.15);
+            color: #e8e6e3;
+            font-size: 0.85rem;
+            opacity: 0;
+            transition: all 0.4s ease;
+            pointer-events: none;
+            z-index: 999;
+            max-width: 90%;
+            text-align: center;
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    </style>
+</head>
+<body>
+<div class="app-wrap">
+    <header class="header">
+        <h1>🔧 基建排版器 <small>ARKNIGHTS · 两班倒</small></h1>
+    </header>
+
+    <section class="card">
+        <div class="card-title">📐 布局方案</div>
+        <div class="layout-group" id="layoutGroup">
+            <button class="layout-btn active" data-layout="243">243 <span class="sub">2贸易 · 4制造</span></button>
+            <button class="layout-btn" data-layout="333">333 <span class="sub">3贸易 · 3制造</span></button>
+        </div>
+    </section>
+
+    <section class="card" id="opSection">
+        <div class="card-title">
+            🧑‍🚀 干员选择
+            <span class="badge" id="opCountBadge">0 已选</span>
+        </div>
+        <div class="op-search-wrap">
+            <input type="text" id="opSearch" placeholder="搜索干员..." autocomplete="off" />
+            <button class="clear-btn" id="clearSearchBtn" title="清除搜索">✕</button>
+        </div>
+        <div class="filter-tabs" id="filterTabs">
+            <button class="filter-tab active" data-filter="all">全部</button>
+            <button class="filter-tab" data-filter="贸易站"><span class="dot" style="background:#4a7fc7;"></span>贸易</button>
+            <button class="filter-tab" data-filter="赤金"><span class="dot" style="background:#f0c45a;"></span>赤金</button>
+            <button class="filter-tab" data-filter="经验"><span class="dot" style="background:#4caf7a;"></span>经验</button>
+            <button class="filter-tab" data-filter="源石"><span class="dot" style="background:#9c4dca;"></span>源石</button>
+            <button class="filter-tab" data-filter="通用"><span class="dot" style="background:#7a7a8a;"></span>通用</button>
+        </div>
+        <!-- 星级和职业参考标签（仅视觉提示） -->
+        <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px; font-size:0.7rem; color:rgba(255,255,255,0.3);">
+            <span>⭐ 星级：</span>
+            <span class="filter-tab" style="padding:2px 10px; cursor:default; background:rgba(255,255,255,0.03);">★6</span>
+            <span class="filter-tab" style="padding:2px 10px; cursor:default; background:rgba(255,255,255,0.03);">★5</span>
+            <span class="filter-tab" style="padding:2px 10px; cursor:default; background:rgba(255,255,255,0.03);">★4</span>
+            <span class="filter-tab" style="padding:2px 10px; cursor:default; background:rgba(255,255,255,0.03);">★3</span>
+            <span class="filter-tab" style="padding:2px 10px; cursor:default; background:rgba(255,255,255,0.03);">★2</span>
+            <span class="filter-tab" style="padding:2px 10px; cursor:default; background:rgba(255,255,255,0.03);">★1</span>
+            <span style="margin-left:12px;">职业：</span>
+            <span class="filter-tab" style="padding:2px 10px; cursor:default; background:rgba(255,255,255,0.03);">先锋</span>
+            <span class="filter-tab" style="padding:2px 10px; cursor:default; background:rgba(255,255,255,0.03);">近卫</span>
+            <span class="filter-tab" style="padding:2px 10px; cursor:default; background:rgba(255,255,255,0.03);">重装</span>
+            <span class="filter-tab" style="padding:2px 10px; cursor:default; background:rgba(255,255,255,0.03);">狙击</span>
+            <span class="filter-tab" style="padding:2px 10px; cursor:default; background:rgba(255,255,255,0.03);">术师</span>
+            <span class="filter-tab" style="padding:2px 10px; cursor:default; background:rgba(255,255,255,0.03);">医疗</span>
+            <span class="filter-tab" style="padding:2px 10px; cursor:default; background:rgba(255,255,255,0.03);">辅助</span>
+            <span class="filter-tab" style="padding:2px 10px; cursor:default; background:rgba(255,255,255,0.03);">特种</span>
+        </div>
+        <div class="op-grid" id="opGrid"></div>
+        <div class="op-stats">
+            <span class="count">已选 <strong id="selectedCount">0</strong> / <span id="totalCount">0</span> 名干员</span>
+            <div class="actions">
+                <button id="selectAllBtn">全选</button>
+                <button id="invertBtn">反选</button>
+            </div>
+        </div>
+    </section>
+
+    <button class="btn-generate" id="generateBtn">📋 生成两班倒方案</button>
+
+    <section class="card" id="resultCard">
+        <div class="card-title">📋 排版结果</div>
+        <div id="result"></div>
+    </section>
+
+    <div class="toast" id="toast"></div>
+</div>
+
+<script>
+    // =====================================================================
+    //  1. 干员数据（含星级和职业，已按反馈修正）
+    // =====================================================================
+
+    const FIXED_ONLY_OPS = new Set([
+        "火神","泡泡","多萝西","娜斯提","温蒂","冬时","森蚺","槐琥","涤火杰西卡","贝娜",
+        "Miss.Christine","圣约送葬","卡达","豆苗","蛇屠箱","黑角","引星棘刺","褐果",
+        "但书","可露希尔","雷缪安","巫恋","龙舌兰","柏喙","卡夫卡","明椒","折光","琳琅诗怀雅",
+        "伺夜","空弦","深巡","吉星","石英","维娜·维多利亚","空爆","月见夜","古米","齐尔查克",
+        "慕斯","夜刀","枚兰莎","梓兰","远山","焰狐龙梓兰","雷狼龙S空爆","推进之王","摩根","贝洛内"
+    ]);
+
+    const AVATAR_BASE = 'https://raw.githubusercontent.com/Aceship/Arknight-Images/main/avatars/';
+
+    const OPERATORS = {
+        // 制造站 - 赤金
+        "清流": { facility: "制造站", product: "赤金", type: "自动化", base: 0.25, combo: { "自动化": 2 }, combo_bonus: 0.25, star: 4, class: "辅助", avatar: AVATAR_BASE + 'char_282_clears.png' },
+        "温蒂": { facility: "制造站", product: "通用", type: "自动化", base: 0.20, combo: { "自动化": 2 }, combo_bonus: 0.10, star: 6, class: "特种", avatar: AVATAR_BASE + 'char_202_wendy.png' },
+        "森蚺": { facility: "制造站", product: "通用", type: "自动化", base: 0.20, combo: { "自动化": 2 }, combo_bonus: 0.10, star: 6, class: "重装", avatar: AVATAR_BASE + 'char_216_tomimi.png' },
+        "冬时": { facility: "制造站", product: "赤金", type: "自动化", base: 0.20, star: 4, class: "辅助" },
+        "异客": { facility: "制造站", product: "通用", type: "自动化", base: 0.20, combo: { "自动化": 2 }, combo_bonus: 0.05, star: 6, class: "术师" },
+        "砾": { facility: "制造站", product: "赤金", type: "常规", base: 0.35, star: 4, class: "特种", avatar: AVATAR_BASE + 'char_118_gravel.png' },
+        "斑点": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 3, class: "重装", avatar: AVATAR_BASE + 'char_106_spot.png' },
+        "苍苔": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 5, class: "近卫" },
+        "夜烟": { facility: "制造站", product: "赤金", type: "常规", base: 0.25, star: 4, class: "术师", avatar: AVATAR_BASE + 'char_???_haze.png' },
+        "槐琥": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 5, class: "特种", avatar: AVATAR_BASE + 'char_???_waai_fu.png' },
+        "淬羽赫默": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 5, class: "医疗" },
+        "阿罗玛": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 5, class: "术师" }, // 修正为5星
+        "杏仁": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 5, class: "特种" },
+        "涤火杰西卡": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 6, class: "狙击" }, // 修正为6星
+        "多萝西": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 6, class: "特种", avatar: AVATAR_BASE + 'char_???_dorothy.png' },
+        "娜斯提": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 5, class: "近卫" },
+        "引星棘刺": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 6, class: "近卫" },
+        "温米": { facility: "制造站", product: "赤金", type: "常规", base: 0.25, star: 5, class: "术师" }, // 修正为5星
+
+        // 制造站 - 通用
+        "香草": { facility: "制造站", product: "通用", type: "常规", base: 0.30, star: 3, class: "先锋" },
+        "杰西卡": { facility: "制造站", product: "通用", type: "常规", base: 0.30, star: 4, class: "狙击" },
+        "至简": { facility: "制造站", product: "通用", type: "常规", base: 0.30, star: 5, class: "术师" },
+        "调香师": { facility: "制造站", product: "通用", type: "常规", base: 0.30, star: 4, class: "医疗" },
+        "萝比拉塔": { facility: "制造站", product: "通用", type: "常规", base: 0.30, star: 4, class: "辅助" },
+        "史都华德": { facility: "制造站", product: "通用", type: "常规", base: 0.30, star: 3, class: "术师" },
+        "铅踝": { facility: "制造站", product: "通用", type: "常规", base: 0.25, star: 4, class: "狙击" },
+        "水月": { facility: "制造站", product: "通用", type: "常规", base: 0.25, star: 6, class: "特种", avatar: AVATAR_BASE + 'char_???_mizuki.png' },
+        "梅尔": { facility: "制造站", product: "通用", type: "常规", base: 0.25, star: 5, class: "辅助", avatar: AVATAR_BASE + 'char_???_mayer.png' },
+        "玛露希尔": { facility: "制造站", product: "通用", type: "常规", base: 0.25, star: 5, class: "术师" },
+        "维伊": { facility: "制造站", product: "通用", type: "常规", base: 0.25, star: 6, class: "近卫" }, // 修正为6星
+        "泡普卡": { facility: "制造站", product: "通用", type: "常规", base: 0.20, star: 3, class: "近卫" },
+        "石棉": { facility: "制造站", product: "通用", type: "常规", base: 0.20, star: 5, class: "重装", avatar: AVATAR_BASE + 'char_???_asbestosis.png' },
+        "裁度": { facility: "制造站", product: "通用", type: "常规", base: 0.20, star: 4, class: "近卫" },
+        "芬": { facility: "制造站", product: "通用", type: "常规", base: 0.20, star: 3, class: "先锋", avatar: AVATAR_BASE + 'char_???_fang.png' },
+        "克洛斯": { facility: "制造站", product: "通用", type: "常规", base: 0.20, star: 3, class: "狙击", avatar: AVATAR_BASE + 'char_???_kroos.png' }, // 修正为3星
+
+        // 制造站 - 经验
+        "食铁兽": { facility: "制造站", product: "经验", type: "常规", base: 0.35, star: 5, class: "特种" },
+        "断罪者": { facility: "制造站", product: "经验", type: "常规", base: 0.35, star: 4, class: "近卫" },
+        "Castle-3": { facility: "制造站", product: "经验", type: "常规", base: 0.30, star: 1, class: "近卫" }, // 修正为1星
+        "刻俄柏": { facility: "制造站", product: "经验", type: "经验专精", base: 0.30, star: 6, class: "术师", avatar: AVATAR_BASE + 'char_???_ceobe.png' },
+        "帕拉斯": { facility: "制造站", product: "经验", type: "经验专精", base: 0.30, star: 6, class: "近卫", avatar: AVATAR_BASE + 'char_???_pallas.png' },
+        "稀音": { facility: "制造站", product: "经验", type: "经验专精", base: 0.30, star: 5, class: "辅助", avatar: AVATAR_BASE + 'char_???_scene.png' },
+        "红云": { facility: "制造站", product: "经验", type: "经验专精", base: 0.25, star: 4, class: "狙击", avatar: AVATAR_BASE + 'char_???_red.png' },
+        "酒神": { facility: "制造站", product: "经验", type: "经验专精", base: 0.32, star: 6, class: "辅助" },
+        "Miss.Christine": { facility: "制造站", product: "经验", type: "经验专精", base: 0.30, star: 5, class: "辅助" },
+        "卡达": { facility: "制造站", product: "经验", type: "经验专精", base: 0.25, star: 4, class: "术师" },
+        "豆苗": { facility: "制造站", product: "经验", type: "经验专精", base: 0.20, star: 4, class: "先锋", avatar: AVATAR_BASE + 'char_???_beanstalk.png' },
+        "黑角": { facility: "制造站", product: "经验", type: "经验专精", base: 0.15, star: 2, class: "重装", avatar: AVATAR_BASE + 'char_???_noir_corne.png' },
+        "蛇屠箱": { facility: "制造站", product: "经验", type: "经验专精", base: 0.20, star: 4, class: "重装", avatar: AVATAR_BASE + 'char_???_cuora.png' },
+        "怒潮凛冬": { facility: "制造站", product: "经验", type: "常规", base: 0.30, star: 6, class: "先锋" }, // 修正为6星
+        "裂响": { facility: "制造站", product: "经验", type: "常规", base: 0.28, star: 5, class: "术师" },
+        "弑君者": { facility: "制造站", product: "经验", type: "常规", base: 0.30, star: 5, class: "特种" },
+        "机械师": { facility: "制造站", product: "经验", type: "常规", base: 0.25, star: 6, class: "辅助" }, // 修正为6星
+        "白雪": { facility: "制造站", product: "经验", type: "常规", base: 0.20, star: 4, class: "狙击", avatar: AVATAR_BASE + 'char_???_shirayuki.png' },
+        "霜叶": { facility: "制造站", product: "经验", type: "常规", base: 0.20, star: 4, class: "近卫", avatar: AVATAR_BASE + 'char_???_frostleaf.png' },
+        "红豆": { facility: "制造站", product: "经验", type: "常规", base: 0.15, star: 4, class: "先锋", avatar: AVATAR_BASE + 'char_???_vigna.png' },
+        "圣约送葬": { facility: "制造站", product: "经验", type: "常规", base: 0.30, star: 6, class: "近卫" },
+        "火神": { facility: "制造站", product: "通用", type: "经验专精", base: 0.35, star: 5, class: "重装", avatar: AVATAR_BASE + 'char_???_vulcan.png' },
+        "泡泡": { facility: "制造站", product: "通用", type: "经验专精", base: 0.30, star: 4, class: "重装" },
+        "贝娜": { facility: "制造站", product: "通用", type: "经验专精", base: 0.25, star: 5, class: "特种" },
+
+        // 制造站 - 源石材料
+        "褐果": { facility: "制造站", product: "源石材料", type: "常规", base: 0.30, star: 4, class: "医疗" },
+        "地灵": { facility: "制造站", product: "源石材料", type: "源石加工", base: 0.30, star: 4, class: "辅助" },
+        "炎熔": { facility: "制造站", product: "源石材料", type: "常规", base: 0.25, star: 3, class: "术师" },
+        "薄绿": { facility: "制造站", product: "源石材料", type: "常规", base: 0.20, star: 5, class: "术师" },
+        "月见夜": { facility: "制造站", product: "源石材料", type: "常规", base: 0.20, star: 3, class: "近卫" },
+        "谬因": { facility: "制造站", product: "源石材料", type: "常规", base: 0.20, star: 6, class: "术师" }, // 修正为6星
+        "艾雅法拉": { facility: "制造站", product: "源石材料", type: "源石加工", base: 0.25, star: 6, class: "术师", avatar: AVATAR_BASE + 'char_???_eyjafjalla.png' },
+        "锡兰": { facility: "制造站", product: "源石材料", type: "源石加工", base: 0.20, combo: { "源石加工": 2 }, combo_bonus: 0.10, star: 5, class: "医疗", avatar: AVATAR_BASE + 'char_???_ceylon.png' },
+        "炎客": { facility: "制造站", product: "源石材料", type: "源石加工", base: 0.20, star: 5, class: "近卫", avatar: AVATAR_BASE + 'char_???_flamebringer.png' },
+
+        // 贸易站
+        "银灰": { facility: "贸易站", product: "通用", type: "交际", base: 0.20, combo: { "交际": 2 }, combo_bonus: 0.15, star: 6, class: "近卫", avatar: AVATAR_BASE + 'char_???_silverash.png' },
+        "崖心": { facility: "贸易站", product: "通用", type: "交际", base: 0.20, combo: { "交际": 2 }, combo_bonus: 0.15, star: 5, class: "特种", avatar: AVATAR_BASE + 'char_???_cliffheart.png' },
+        "孑": { facility: "贸易站", product: "通用", type: "裁缝", base: 0.25, combo: { "裁缝": 1 }, combo_bonus: 0.10, star: 4, class: "特种", avatar: AVATAR_BASE + 'char_???_jaye.png' },
+        "能天使": { facility: "贸易站", product: "通用", type: "企鹅物流", base: 0.20, combo: { "企鹅物流": 2 }, combo_bonus: 0.15, star: 6, class: "狙击", avatar: AVATAR_BASE + 'char_???_exusiai.png' },
+        "德克萨斯": { facility: "贸易站", product: "通用", type: "企鹅物流", base: 0.20, combo: { "企鹅物流": 2 }, combo_bonus: 0.15, star: 5, class: "先锋", avatar: AVATAR_BASE + 'char_???_texas.png' },
+        "拉普兰德": { facility: "贸易站", product: "通用", type: "企鹅物流", base: 0.20, combo: { "企鹅物流": 2 }, combo_bonus: 0.15, star: 5, class: "近卫", avatar: AVATAR_BASE + 'char_???_lappland.png' },
+        "但书": { facility: "贸易站", product: "通用", type: "谈判", base: 0.30, star: 5, class: "辅助" },
+        "可露希尔": { facility: "贸易站", product: "通用", type: "谈判", base: 0.30, star: 5, class: "辅助", avatar: AVATAR_BASE + 'char_???_closure.png' },
+        "雷缪安": { facility: "贸易站", product: "通用", type: "特殊", base: 0.30, star: 5, class: "狙击" },
+        "巫恋": { facility: "贸易站", product: "通用", type: "裁缝", base: 0.25, star: 5, class: "辅助", avatar: AVATAR_BASE + 'char_???_witch.png' },
+        "龙舌兰": { facility: "贸易站", product: "通用", type: "裁缝", base: 0.30, star: 5, class: "近卫", avatar: AVATAR_BASE + 'char_???_tequila.png' },
+        "柏喙": { facility: "贸易站", product: "通用", type: "裁缝", base: 0.20, star: 5, class: "近卫" },
+        "卡夫卡": { facility: "贸易站", product: "通用", type: "裁缝", base: 0.25, star: 5, class: "特种" },
+        "明椒": { facility: "贸易站", product: "通用", type: "裁缝", base: 0.20, star: 5, class: "医疗" }, // 修正为5星
+        "折光": { facility: "贸易站", product: "通用", type: "裁缝", base: 0.20, star: 5, class: "术师" },
+        "琳琅诗怀雅": { facility: "贸易站", product: "通用", type: "交际", base: 0.30, star: 6, class: "特种" },
+        "伺夜": { facility: "贸易站", product: "通用", type: "常规", base: 0.30, star: 6, class: "先锋" },
+        "空弦": { facility: "贸易站", product: "通用", type: "常规", base: 0.25, star: 6, class: "狙击" },
+        "深巡": { facility: "贸易站", product: "通用", type: "常规", base: 0.25, star: 5, class: "重装" },
+        "吉星": { facility: "贸易站", product: "通用", type: "常规", base: 0.25, star: 5, class: "近卫" },
+        "石英": { facility: "贸易站", product: "通用", type: "常规", base: 0.25, star: 4, class: "近卫" },
+        "维娜·维多利亚": { facility: "贸易站", product: "通用", type: "常规", base: 0.20, star: 6, class: "近卫" },
+        "空爆": { facility: "贸易站", product: "通用", type: "常规", base: 0.20, star: 3, class: "狙击", avatar: AVATAR_BASE + 'char_???_catapult.png' },
+        "古米": { facility: "贸易站", product: "通用", type: "常规", base: 0.20, star: 4, class: "重装", avatar: AVATAR_BASE + 'char_???_gummy.png' },
+        "齐尔查克": { facility: "贸易站", product: "通用", type: "常规", base: 0.20, star: 4, class: "特种" },
+        "慕斯": { facility: "贸易站", product: "通用", type: "常规", base: 0.15, star: 4, class: "近卫", avatar: AVATAR_BASE + 'char_???_mousse.png' },
+        "夜刀": { facility: "贸易站", product: "通用", type: "常规", base: 0.15, star: 2, class: "先锋", avatar: AVATAR_BASE + 'char_???_yato.png' },
+        "枚兰莎": { facility: "贸易站", product: "通用", type: "常规", base: 0.15, star: 3, class: "近卫" },
+        "梓兰": { facility: "贸易站", product: "通用", type: "常规", base: 0.15, star: 3, class: "术师", avatar: AVATAR_BASE + 'char_???_orchid.png' },
+        "远山": { facility: "贸易站", product: "通用", type: "常规", base: 0.15, star: 4, class: "术师", avatar: AVATAR_BASE + 'char_???_gitano.png' },
+        "焰狐龙梓兰": { facility: "贸易站", product: "通用", type: "特殊", base: 0.25, star: 6, class: "术师" }, // 修正为6星
+        "雷狼龙S空爆": { facility: "贸易站", product: "通用", type: "特殊", base: 0.25, star: 5, class: "狙击" },
+        "推进之王": { facility: "贸易站", product: "通用", type: "领导", base: 0.25, star: 6, class: "先锋", avatar: AVATAR_BASE + 'char_???_siege.png' },
+        "摩根": { facility: "贸易站", product: "通用", type: "领导", base: 0.20, star: 5, class: "近卫", avatar: AVATAR_BASE + 'char_???_morgan.png' },
+        "贝洛内": { facility: "贸易站", product: "通用", type: "领导", base: 0.20, star: 6, class: "先锋" }, // 修正为6星
+    };
+
+    // =====================================================================
+    //  2. 组合数据（完全保留）
+    // =====================================================================
+
+    const AK_COMBOS = [
+        { required: [["清流"],["温蒂"],["冬时","森蚺"]], bonus: 0.25 },
+        { required: [["苍苔"],["引星棘刺"],["夜烟","斑点"]], bonus: 0.25 },
+        { required: [["苍苔"],["斑点"],["夜烟"]], bonus: 0.20 },
+        { required: [["阿罗玛"],["槐琥"],["砾"]], bonus: 0.20 },
+        { required: [["多萝西"],["娜斯提"],["淬羽赫默"]], bonus: 0.25 },
+        { required: [["涤火杰西卡"],["杏仁"],["香草","杰西卡"]], bonus: 0.20 },
+        { required: [["火神"],["泡泡"],["贝娜"]], bonus: 0.25 }
+    ];
+
+    const ORI_COMBOS = [ { required: [["火神"],["泡泡"],["褐果"]], bonus: 0.25 } ];
+
+    const EXPERIENCE_COMBOS = [
+        { required: [["刻俄柏","帕拉斯"],["稀音"],["红云"]], bonus: 0.25 },
+        { required: [["酒神"],["Miss.Christine"],["红云"]], bonus: 0.20 },
+        { required: [["火神"],["泡泡"],["圣约送葬"]], bonus: 0.30 },
+        { required: [["火神"],["泡泡"],["贝娜"]], bonus: 0.25 },
+        { required: [["红云"],["卡达"],["豆苗","黑角","蛇屠箱"]], bonus: 0.15 }
+    ];
+
+    const TRADE_COMBOS = [
+        { required: [["但书"],["雷缪安"],["能天使"]], bonus: 0.30 },
+        { required: [["但书"],["孑"],["银灰"]], bonus: 0.25 },
+        { required: [["但书"],["伺夜"],["贝洛内"]], bonus: 0.20 },
+        { required: [["但书"],["推进之王"],["摩根"]], bonus: 0.20 },
+        { required: [["但书"],["焰狐龙梓兰"],["雷狼龙S空爆"]], bonus: 0.25 },
+        { required: [["可露希尔"],["雷缪安"],["能天使"]], bonus: 0.30 },
+        { required: [["可露希尔"],["孑"],["银灰"]], bonus: 0.25 },
+        { required: [["可露希尔"],["伺夜"],["贝洛内"]], bonus: 0.20 },
+        { required: [["可露希尔"],["推进之王"],["摩根"]], bonus: 0.20 },
+        { required: [["可露希尔"],["焰狐龙梓兰"],["雷狼龙S空爆"]], bonus: 0.25 },
+        { required: [["巫恋"],["龙舌兰"],["柏喙","卡夫卡","明椒","折光"]], bonus: 0.30 },
+        { required: [["孑"],["银灰"],["琳琅诗怀雅"]], bonus: 0.25 },
+        { required: [["但书"],["拉普兰德"],["德克萨斯"]], bonus: 0.25 },
+        { required: [["可露希尔"],["拉普兰德"],["德克萨斯"]], bonus: 0.25 }
+    ];
+
+    const TRADE_PAIRS = [ ["伺夜","贝洛内"], ["雷缪安","能天使"], ["焰狐龙梓兰","雷狼龙S空爆"] ];
+    const TRADE_TIERS = [
+        ["伺夜","空弦","深巡","吉星","石英"],
+        ["能天使","维娜·维多利亚","空爆","月见夜","古米","齐尔查克"],
+        ["慕斯","夜刀","芬","枚兰莎","梓兰","远山"]
+    ];
+
+    // =====================================================================
+    //  3. 核心算法（完全保留）
+    // =====================================================================
+
+    function getBaseEff(name, product) {
+        const op = OPERATORS[name];
+        if (!op) return 0;
+        if (product && op.product !== "通用" && op.product !== product) return 0;
+        return op.base;
+    }
+
+    function calcTeamEff(team, facilityType, product) {
+        let total = 0, typeCount = {};
+        const validTeam = team.filter(n => n in OPERATORS);
+        for (let name of validTeam) {
+            const op = OPERATORS[name];
+            if (op.facility !== facilityType) return -1;
+            if (product && op.product !== "通用" && op.product !== product) return -1;
+            total += op.base;
+            typeCount[op.type] = (typeCount[op.type] || 0) + 1;
+        }
+        for (let name of validTeam) {
+            const op = OPERATORS[name];
+            if (op.combo) {
+                for (let [ct, need] of Object.entries(op.combo)) {
+                    if ((typeCount[ct] || 0) >= need) total += op.combo_bonus || 0;
+                }
+            }
+        }
+        if (facilityType === "贸易站") {
+            const teamSet = new Set(validTeam);
+            for (let combo of TRADE_COMBOS) {
+                if (combo.required.every(reqSet => reqSet.some(name => teamSet.has(name)))) {
+                    total += combo.bonus; break;
+                }
+            }
+        } else if (facilityType === "制造站") {
+            const teamSet = new Set(validTeam);
+            const combos = product === "赤金" ? AK_COMBOS : (product === "源石材料" ? ORI_COMBOS : EXPERIENCE_COMBOS);
+            for (let combo of combos) {
+                if (combo.required.every(reqSet => reqSet.some(name => teamSet.has(name)))) {
+                    total += combo.bonus; break;
+                }
+            }
+        }
+        return total;
+    }
+
+    function allocateTrade(availableSet, numStations) {
+        const used = new Set();
+        const teams = [];
+        const available = new Set(availableSet);
+        for (let combo of TRADE_COMBOS) {
+            if (teams.length >= numStations) break;
+            let chosen = [], possible = true;
+            for (let reqSet of combo.required) {
+                let found = null;
+                for (let name of reqSet) {
+                    if (available.has(name) && !used.has(name)) { found = name; break; }
+                }
+                if (!found) { possible = false; break; }
+                chosen.push(found);
+            }
+            if (possible) {
+                teams.push(chosen);
+                chosen.forEach(n => { used.add(n); available.delete(n); });
+            }
+        }
+        while (teams.length < numStations) {
+            let team = null;
+            for (let pair of TRADE_PAIRS) {
+                const [a, b] = pair;
+                if (available.has(a) && available.has(b) && !used.has(a) && !used.has(b)) {
+                    const third = [...available].filter(n => {
+                        if (used.has(n) || n === a || n === b) return false;
+                        return OPERATORS[n].facility === "贸易站";
+                    }).sort((x, y) => {
+                        const idxX = TRADE_TIERS.findIndex(t => t.includes(x));
+                        const idxY = TRADE_TIERS.findIndex(t => t.includes(y));
+                        if (idxX === -1 && idxY === -1) return getBaseEff(y,"通用") - getBaseEff(x,"通用");
+                        if (idxX === -1) return 1;
+                        if (idxY === -1) return -1;
+                        return idxX - idxY || getBaseEff(y,"通用") - getBaseEff(x,"通用");
+                    })[0];
+                    if (third) team = [a,b,third];
+                    else team = [a,b];
+                    break;
+                }
+            }
+            if (!team) {
+                const candidates = [];
+                for (let tier of TRADE_TIERS) {
+                    for (let name of tier) {
+                        if (available.has(name) && !used.has(name) && OPERATORS[name].facility === "贸易站") {
+                            candidates.push(name);
+                        }
+                    }
+                }
+                const rest = [...available].filter(n => !used.has(n) && OPERATORS[n].facility === "贸易站")
+                    .sort((a,b) => getBaseEff(b,"通用") - getBaseEff(a,"通用"));
+                for (let n of rest) if (!candidates.includes(n)) candidates.push(n);
+                team = candidates.slice(0,3);
+            }
+            if (!team || team.length === 0) teams.push(["无合适干员"]);
+            else { teams.push(team); team.forEach(n => { used.add(n); available.delete(n); }); }
+        }
+        return { teams, used };
+    }
+
+    function allocateProduct(availableSet, combos, product, numStations) {
+        const used = new Set();
+        const teams = [];
+        const available = new Set(availableSet);
+        for (let combo of combos) {
+            if (teams.length >= numStations) break;
+            let chosen = [], possible = true;
+            for (let reqSet of combo.required) {
+                let found = null;
+                for (let name of reqSet) {
+                    if (available.has(name) && !used.has(name)) { found = name; break; }
+                }
+                if (!found) { possible = false; break; }
+                chosen.push(found);
+            }
+            if (possible) {
+                teams.push(chosen);
+                chosen.forEach(n => { used.add(n); available.delete(n); });
+            }
+        }
+        while (teams.length < numStations) {
+            const productCandidates = [...available].filter(n => {
+                if (used.has(n) || FIXED_ONLY_OPS.has(n)) return false;
+                const op = OPERATORS[n];
+                return op && op.facility === "制造站" && op.product === product;
+            }).sort((a,b) => getBaseEff(b,product) - getBaseEff(a,product));
+            let team = productCandidates.slice(0,3);
+            if (team.length < 3) {
+                const genericCandidates = [...available].filter(n => {
+                    if (used.has(n) || FIXED_ONLY_OPS.has(n)) return false;
+                    const op = OPERATORS[n];
+                    return op && op.facility === "制造站" && op.product === "通用";
+                }).sort((a,b) => getBaseEff(b,product) - getBaseEff(a,product));
+                const needed = 3 - team.length;
+                team = team.concat(genericCandidates.slice(0, needed));
+            }
+            if (team.length === 0) teams.push(["无合适干员"]);
+            else { teams.push(team); team.forEach(n => { used.add(n); available.delete(n); }); }
+        }
+        return { teams, used };
+    }
+
+    function allocateOriginium(availableSet, numStations) {
+        const used = new Set();
+        const teams = [];
+        const available = new Set(availableSet);
+        for (let combo of ORI_COMBOS) {
+            if (teams.length >= numStations) break;
+            let chosen = [], possible = true;
+            for (let reqSet of combo.required) {
+                let found = null;
+                for (let name of reqSet) {
+                    if (available.has(name) && !used.has(name)) { found = name; break; }
+                }
+                if (!found) { possible = false; break; }
+                chosen.push(found);
+            }
+            if (possible) {
+                teams.push(chosen);
+                chosen.forEach(n => { used.add(n); available.delete(n); });
+            }
+        }
+        while (teams.length < numStations) {
+            let team = null;
+            const coreCandidate = ["蛇屠箱","黑角"].find(n => available.has(n) && !used.has(n));
+            if (coreCandidate) {
+                const otherSource = [...available].filter(n => {
+                    if (used.has(n) || n === coreCandidate) return false;
+                    if (FIXED_ONLY_OPS.has(n) && n !== "蛇屠箱" && n !== "黑角") return false;
+                    const op = OPERATORS[n];
+                    return op && op.facility === "制造站" && op.product === "源石材料";
+                }).sort((a,b) => getBaseEff(b,"源石材料") - getBaseEff(a,"源石材料"));
+                if (otherSource.length >= 2) team = [coreCandidate, ...otherSource.slice(0,2)];
+            }
+            if (!team) {
+                const pureSource = [...available].filter(n => {
+                    if (used.has(n)) return false;
+                    if (FIXED_ONLY_OPS.has(n) && n !== "蛇屠箱" && n !== "黑角") return false;
+                    const op = OPERATORS[n];
+                    return op && op.facility === "制造站" && op.product === "源石材料";
+                }).sort((a,b) => getBaseEff(b,"源石材料") - getBaseEff(a,"源石材料"));
+                if (pureSource.length >= 3) {
+                    team = pureSource.slice(0,3);
+                } else {
+                    const genericFill = [...available].filter(n => {
+                        if (used.has(n) || FIXED_ONLY_OPS.has(n)) return false;
+                        const op = OPERATORS[n];
+                        return op && op.facility === "制造站" && op.product === "通用";
+                    }).sort((a,b) => getBaseEff(b,"源石材料") - getBaseEff(a,"源石材料"));
+                    team = pureSource.concat(genericFill).slice(0,3);
+                }
+            }
+            if (!team || team.length === 0) teams.push(["无合适干员"]);
+            else { teams.push(team); team.forEach(n => { used.add(n); available.delete(n); }); }
+        }
+        return { teams, used };
+    }
+
+    function fullAllocation(owned, tradeCount, akCount, oriCount, expCount) {
+        const globalAvailable = new Set(owned);
+        const assignments = {};
+        const usedTotal = new Set();
+        const akRes = allocateProduct(globalAvailable, AK_COMBOS, "赤金", akCount);
+        for (let i = 0; i < akCount; i++) assignments[`赤金制造站${i+1}`] = akRes.teams[i] || ["无合适干员"];
+        akRes.used.forEach(n => { usedTotal.add(n); globalAvailable.delete(n); });
+        const oriRes = allocateOriginium(globalAvailable, oriCount);
+        for (let i = 0; i < oriCount; i++) assignments[`源石制造站${i+1}`] = oriRes.teams[i] || ["无合适干员"];
+        oriRes.used.forEach(n => { usedTotal.add(n); globalAvailable.delete(n); });
+        const tradeRes = allocateTrade(globalAvailable, tradeCount);
+        for (let i = 0; i < tradeCount; i++) assignments[`贸易站${i+1}`] = tradeRes.teams[i] || ["无合适干员"];
+        tradeRes.used.forEach(n => { usedTotal.add(n); globalAvailable.delete(n); });
+        const expRes = allocateProduct(globalAvailable, EXPERIENCE_COMBOS, "经验", expCount);
+        for (let i = 0; i < expCount; i++) assignments[`经验制造站${i+1}`] = expRes.teams[i] || ["无合适干员"];
+        expRes.used.forEach(n => { usedTotal.add(n); globalAvailable.delete(n); });
+        return { assignments, used: usedTotal, unused: [...globalAvailable] };
+    }
+
+    function assignBothShifts(owned, tradeCount, akCount, oriCount, expCount) {
+        const first = fullAllocation(owned, tradeCount, akCount, oriCount, expCount);
+        const remaining = owned.filter(op => !first.used.has(op));
+        const second = fullAllocation(remaining, tradeCount, akCount, oriCount, expCount);
+        return { first, second };
+    }
+
+    // =====================================================================
+    //  4. 头像辅助
+    // =====================================================================
+
+    function getAvatarUrl(name) {
+        const op = OPERATORS[name];
+        if (op && op.avatar) return op.avatar;
+        return null;
+    }
+
+    // =====================================================================
+    //  5. UI 交互
+    // =====================================================================
+
+    const FORBIDDEN_IN_333 = new Set(["可露希尔","但书","巫恋"]);
+    let selectedOps = new Set();
+    let currentLayout = '243';
+    let currentFilter = 'all';
+    let searchQuery = '';
+
+    const layoutBtns = document.querySelectorAll('.layout-btn');
+    const opGrid = document.getElementById('opGrid');
+    const opSearch = document.getElementById('opSearch');
+    const clearSearchBtn = document.getElementById('clearSearchBtn');
+    const filterTabs = document.getElementById('filterTabs');
+    const selectedCountEl = document.getElementById('selectedCount');
+    const totalCountEl = document.getElementById('totalCount');
+    const opCountBadge = document.getElementById('opCountBadge');
+    const generateBtn = document.getElementById('generateBtn');
+    const resultCard = document.getElementById('resultCard');
+    const resultEl = document.getElementById('result');
+    const toastEl = document.getElementById('toast');
+
+    const allOpNames = Object.keys(OPERATORS).sort((a,b) => a.localeCompare(b,'zh'));
+
+    function getOpColorClass(name) {
+        const op = OPERATORS[name];
+        if (!op) return 'color-默认';
+        if (op.facility === '贸易站') return 'color-trade';
+        if (op.product === '赤金') return 'color-赤金';
+        if (op.product === '经验') return 'color-经验';
+        if (op.product === '源石材料') return 'color-源石';
+        if (op.product === '通用') return 'color-通用';
+        return 'color-默认';
+    }
+
+    function getOpTag(name) {
+        const op = OPERATORS[name];
+        if (!op) return '';
+        if (op.facility === '贸易站') return '贸易';
+        return op.product === '通用' ? '通用' : op.product;
+    }
+
+    // 渲染干员卡片（含星级和职业）
+    function renderGrid() {
+        const filter = currentFilter;
+        const query = searchQuery.trim().toLowerCase();
+
+        let filtered = allOpNames.filter(name => {
+            if (query && !name.toLowerCase().includes(query)) return false;
+            if (filter === 'all') return true;
+            const op = OPERATORS[name];
+            if (!op) return false;
+            if (filter === '贸易站') return op.facility === '贸易站';
+            if (filter === '赤金') return op.facility === '制造站' && op.product === '赤金';
+            if (filter === '经验') return op.facility === '制造站' && op.product === '经验';
+            if (filter === '源石') return op.facility === '制造站' && op.product === '源石材料';
+            if (filter === '通用') return op.facility === '制造站' && op.product === '通用';
+            return true;
+        });
+
+        filtered.sort((a,b) => {
+            const aSel = selectedOps.has(a) ? 1 : 0;
+            const bSel = selectedOps.has(b) ? 1 : 0;
+            return bSel - aSel;
+        });
+
+        if (filtered.length === 0) {
+            opGrid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><span class="icon">🔍</span>没有匹配的干员</div>`;
+            return;
+        }
+
+        let html = '';
+        for (let name of filtered) {
+            const isSelected = selectedOps.has(name);
+            const isForbidden = FORBIDDEN_IN_333.has(name) && currentLayout === '333';
+            const colorClass = getOpColorClass(name);
+            const tag = getOpTag(name);
+            const initial = name.charAt(0).toUpperCase();
+            const avatarUrl = getAvatarUrl(name);
+            const op = OPERATORS[name];
+            const star = op && op.star ? op.star : 0;
+            const cls = op && op.class ? op.class : '';
+            const starStr = star > 0 ? '★'.repeat(star) : '';
+
+            let avatarHtml = '';
+            if (avatarUrl) {
+                avatarHtml = `<img src="${avatarUrl}" alt="${name}" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\\'fallback-text\\'>${initial}</span>'; this.parentElement.style.background='';">`;
+            } else {
+                avatarHtml = `<span class="fallback-text">${initial}</span>`;
+            }
+
+            html += `
+                <div class="op-card ${isSelected ? 'selected' : ''} ${isForbidden ? 'disabled' : ''}" data-op="${name}">
+                    <span class="check-mark">✓</span>
+                    <div class="op-avatar ${colorClass}">${avatarHtml}</div>
+                    <div class="op-name">${name}</div>
+                    <div class="op-meta">
+                        ${starStr ? `<span class="star">${starStr}</span>` : ''}
+                        ${cls ? `<span class="class-tag">${cls}</span>` : ''}
+                    </div>
+                    ${tag ? `<div class="op-tag">${tag}</div>` : ''}
+                </div>
+            `;
+        }
+        opGrid.innerHTML = html;
+
+        totalCountEl.textContent = allOpNames.length;
+        selectedCountEl.textContent = selectedOps.size;
+        opCountBadge.textContent = `${selectedOps.size} 已选`;
+
+        document.querySelectorAll('.op-card:not(.disabled)').forEach(el => {
+            el.addEventListener('click', () => {
+                const name = el.dataset.op;
+                toggleOp(name);
+            });
+        });
+
+        updateGenerateBtn();
+    }
+
+    function toggleOp(name) {
+        const isForbidden = FORBIDDEN_IN_333.has(name) && currentLayout === '333';
+        if (isForbidden) return;
+        if (selectedOps.has(name)) selectedOps.delete(name);
+        else selectedOps.add(name);
+        renderGrid();
+        updateGenerateBtn();
+    }
+
+    function selectAll() {
+        const available = allOpNames.filter(name => {
+            if (FORBIDDEN_IN_333.has(name) && currentLayout === '333') return false;
+            return true;
+        });
+        if (selectedOps.size === available.length) selectedOps.clear();
+        else available.forEach(n => selectedOps.add(n));
+        renderGrid();
+        updateGenerateBtn();
+    }
+
+    function invertSelect() {
+        const available = allOpNames.filter(name => {
+            if (FORBIDDEN_IN_333.has(name) && currentLayout === '333') return false;
+            return true;
+        });
+        const newSet = new Set();
+        for (let name of available) {
+            if (!selectedOps.has(name)) newSet.add(name);
+        }
+        selectedOps = newSet;
+        renderGrid();
+        updateGenerateBtn();
+    }
+
+    function updateGenerateBtn() {
+        const count = selectedOps.size;
+        generateBtn.disabled = count === 0;
+        generateBtn.textContent = count === 0 ? '⚠️ 请至少选择一名干员' : '📋 生成两班倒方案';
+    }
+
+    let toastTimer = null;
+    function showToast(msg, duration = 2000) {
+        toastEl.textContent = msg;
+        toastEl.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => { toastEl.classList.remove('show'); }, duration);
+    }
+
+    function setLayout(layout) {
+        currentLayout = layout;
+        layoutBtns.forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.layout === layout);
+        });
+        if (layout === '333') {
+            for (let name of FORBIDDEN_IN_333) {
+                if (selectedOps.has(name)) selectedOps.delete(name);
+            }
+        }
+        renderGrid();
+        updateGenerateBtn();
+        showToast(`切换到 ${layout === '243' ? '243（2贸易 4制造）' : '333（3贸易 3制造）'}`, 1200);
+    }
+
+    function setFilter(filter) {
+        currentFilter = filter;
+        filterTabs.querySelectorAll('.filter-tab').forEach(el => {
+            el.classList.toggle('active', el.dataset.filter === filter);
+        });
+        renderGrid();
+    }
+
+    function doSearch() {
+        searchQuery = opSearch.value;
+        renderGrid();
+    }
+
+    function generatePlan() {
+        const owned = Array.from(selectedOps);
+        if (owned.length === 0) {
+            showToast('请至少选择一名干员！', 1800);
+            return;
+        }
+
+        let tradeCount, akCount, oriCount, expCount, strategy;
+        if (currentLayout === '243') {
+            tradeCount = 2; akCount = 2; oriCount = 0; expCount = 2;
+            strategy = '龙门商法（全部贸易站）';
+        } else {
+            tradeCount = 3; akCount = 2; oriCount = 1; expCount = 0;
+            strategy = '2龙门商法 + 1开采协力';
+        }
+
+        const { first, second } = assignBothShifts(owned, tradeCount, akCount, oriCount, expCount);
+
+        let resultText = `策略：${strategy}\n\n`;
+        const order = [];
+        for (let i = 1; i <= tradeCount; i++) order.push(`贸易站${i}`);
+        for (let i = 1; i <= akCount; i++) order.push(`赤金制造站${i}`);
+        for (let i = 1; i <= oriCount; i++) order.push(`源石制造站${i}`);
+        for (let i = 1; i <= expCount; i++) order.push(`经验制造站${i}`);
+
+        for (let label of order) {
+            const team1 = first.assignments[label] || ["无合适干员"];
+            const team2 = second.assignments[label] || ["无合适干员"];
+
+            let product = "通用";
+            if (label.includes("赤金")) product = "赤金";
+            else if (label.includes("经验")) product = "经验";
+            else if (label.includes("源石")) product = "源石材料";
+            const facType = label.includes("贸易站") ? "贸易站" : "制造站";
+
+            const eff1 = calcTeamEff(team1, facType, product);
+            const eff2 = calcTeamEff(team2, facType, product);
+
+            const effStr1 = eff1 >= 0 ? `${Math.round(eff1 * 100)}%` : '—';
+            const effStr2 = eff2 >= 0 ? `${Math.round(eff2 * 100)}%` : '—';
+
+            resultText += `▸ ${label}\n`;
+            resultText += `  第1班: ${team1.join(" + ")}   (效率 ${effStr1})\n`;
+            resultText += `  第2班: ${team2.join(" + ")}   (效率 ${effStr2})\n\n`;
+        }
+
+        const allUsed = new Set([...first.used, ...second.used]);
+        const unused = owned.filter(op => !allUsed.has(op));
+        if (unused.length > 0) {
+            resultText += `完全未使用的干员：${unused.join("、")}`;
+        }
+
+        resultEl.textContent = resultText;
+        resultCard.style.display = 'block';
+        resultCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        showToast(`✅ 方案已生成，共使用 ${allUsed.size} 名干员`, 1800);
+    }
+
+    // =====================================================================
+    //  6. 初始化
+    // =====================================================================
+
+    document.addEventListener('DOMContentLoaded', () => {
+        setLayout('243');
+
+        layoutBtns.forEach(btn => {
+            btn.addEventListener('click', () => { setLayout(btn.dataset.layout); });
+        });
+
+        filterTabs.querySelectorAll('.filter-tab').forEach(el => {
+            el.addEventListener('click', () => { setFilter(el.dataset.filter); });
+        });
+
+        opSearch.addEventListener('input', doSearch);
+        clearSearchBtn.addEventListener('click', () => {
+            opSearch.value = '';
+            doSearch();
+            opSearch.focus();
+        });
+
+        document.getElementById('selectAllBtn').addEventListener('click', selectAll);
+        document.getElementById('invertBtn').addEventListener('click', invertSelect);
+        generateBtn.addEventListener('click', generatePlan);
+
+        renderGrid();
+        updateGenerateBtn();
+
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+                e.preventDefault();
+                opSearch.focus();
+                opSearch.select();
+            }
+            if (e.key === 'Escape') opSearch.blur();
+        });
+    });
+</script>
+</body>
+</html>
