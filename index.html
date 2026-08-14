@@ -753,12 +753,12 @@
 
 
         // =====================================================================
-        //  干员数据（已修正职业、单挂黑名单）
+        //  干员数据（新增雪雉）
         // =====================================================================
 
         const FIXED_ONLY_OPS = new Set([
             "火神", "泡泡", "多萝西", "娜斯提", "温蒂", "冬时", "森蚺", "槐琥", "涤火杰西卡", "贝娜",
-            "Miss.Christine", "圣约送葬", "卡达", "豆苗", "蛇屠箱", "黑角", "引星棘刺", "褐果",
+            "Miss.Christine", "圣约送葬人", "卡达", "豆苗", "蛇屠箱", "黑角", "引星棘刺", "褐果",
             "但书", "可露希尔", "雷缪安", "巫恋", "龙舌兰", "柏喙", "卡夫卡", "明椒", "折光", "琳琅诗怀雅",
             "伺夜", "空弦", "深巡", "吉星", "石英", "维娜·维多利亚", "空爆", "月见夜", "古米", "齐尔查克",
             "慕斯", "夜刀", "枚兰莎", "梓兰", "远山", "焰狐龙梓兰", "雷狼龙S空爆", "推进之王", "摩根", "贝洛内"
@@ -768,14 +768,14 @@
         const SINGLE_HANG_FORBIDDEN = new Set([
             "卡夫卡", "柏喙", "贝洛内", "德克萨斯", "拉普兰德",
             "孑", "明椒", "摩根", "推进之王", "琳琅诗怀雅", "崖心", "折光",
-            "红云"
+            "红云", "火神"
         ]);
 
         const AVATAR_BASE = 'https://raw.githubusercontent.com/Aceship/Arknight-Images/main/avatars/';
 
         const OPERATORS = {
             // 制造站 - 赤金
-            "清流": { facility: "制造站", product: "赤金", type: "自动化", base: 0.25, combo: { "自动化": 2 },
+            "清流": { facility: "制造站", product: "赤金", type: "自动化", base: 0.35, combo: { "自动化": 2 },
             combo_bonus: 0.25, star: 4, class: "医疗", avatar: AVATAR_BASE + 'char_282_clears.png' },
             "温蒂": { facility: "制造站", product: "通用", type: "自动化", base: 0.20, combo: { "自动化": 2 },
             combo_bonus: 0.10, star: 6, class: "特种", avatar: AVATAR_BASE + 'char_202_wendy.png' },
@@ -804,12 +804,12 @@
             "温米": { facility: "制造站", product: "赤金", type: "常规", base: 0.25, star: 5, class: "术师" },
 
             // 制造站 - 通用
-            "香草": { facility: "制造站", product: "通用", type: "常规", base: 0.30, star: 3, class: "先锋" },
-            "杰西卡": { facility: "制造站", product: "通用", type: "常规", base: 0.30, star: 4, class: "狙击" },
+            "香草": { facility: "制造站", product: "通用", type: "常规", base: 0.25, star: 3, class: "先锋" },
+            "杰西卡": { facility: "制造站", product: "通用", type: "常规", base: 0.25, star: 4, class: "狙击" },
             "至简": { facility: "制造站", product: "通用", type: "常规", base: 0.30, star: 5, class: "术师" },
-            "调香师": { facility: "制造站", product: "通用", type: "常规", base: 0.30, star: 4, class: "医疗" },
+            "调香师": { facility: "制造站", product: "通用", type: "常规", base: 0.25, star: 4, class: "医疗" },
             "萝比拉塔": { facility: "制造站", product: "通用", type: "常规", base: 0.30, star: 4, class: "辅助" },
-            "史都华德": { facility: "制造站", product: "通用", type: "常规", base: 0.30, star: 3, class: "术师" },
+            "史都华德": { facility: "制造站", product: "通用", type: "常规", base: 0.25, star: 3, class: "术师" },
             "铅踝": { facility: "制造站", product: "通用", type: "常规", base: 0.25, star: 4, class: "狙击" },
             "水月": { facility: "制造站", product: "通用", type: "常规", base: 0.25, star: 6, class: "特种",
             avatar: AVATAR_BASE + 'char_???_mizuki.png' },
@@ -825,6 +825,7 @@
             avatar: AVATAR_BASE + 'char_???_fang.png' },
             "克洛斯": { facility: "制造站", product: "通用", type: "常规", base: 0.20, star: 3, class: "狙击",
             avatar: AVATAR_BASE + 'char_???_kroos.png' },
+            "雪猎": { facility: "制造站", product: "通用", type: "常规", base: 0.35, star: 5, class: "狙击" },
 
             // 制造站 - 经验
             "食铁兽": { facility: "制造站", product: "经验", type: "常规", base: 0.35, star: 5, class: "特种" },
@@ -858,25 +859,23 @@
             avatar: AVATAR_BASE + 'char_???_frostleaf.png' },
             "红豆": { facility: "制造站", product: "经验", type: "常规", base: 0.15, star: 4, class: "先锋",
             avatar: AVATAR_BASE + 'char_???_vigna.png' },
-            "圣约送葬": { facility: "制造站", product: "经验", type: "常规", base: 0.30, star: 6, class: "近卫" },
+            "圣约送葬人": { facility: "制造站", product: "经验", type: "常规", base: 0.30, star: 6, class: "近卫" },
             "火神": { facility: "制造站", product: "通用", type: "经验专精", base: 0.35, star: 5, class: "重装",
             avatar: AVATAR_BASE + 'char_???_vulcan.png' },
             "泡泡": { facility: "制造站", product: "通用", type: "经验专精", base: 0.30, star: 4, class: "重装" },
             "贝娜": { facility: "制造站", product: "通用", type: "经验专精", base: 0.25, star: 5, class: "特种" },
 
             // 制造站 - 源石材料
-            "褐果": { facility: "制造站", product: "源石材料", type: "常规", base: 0.30, star: 4, class: "医疗" },
+            "褐果": { facility: "制造站", product: "源石材料", type: "常规", base: 0.35, star: 4, class: "医疗" },
             "地灵": { facility: "制造站", product: "源石材料", type: "源石加工", base: 0.30, star: 4, class: "辅助" },
             "炎熔": { facility: "制造站", product: "源石材料", type: "常规", base: 0.25, star: 3, class: "术师" },
             "薄绿": { facility: "制造站", product: "源石材料", type: "常规", base: 0.20, star: 5, class: "术师" },
             "月见夜": { facility: "制造站", product: "源石材料", type: "常规", base: 0.20, star: 3, class: "近卫" },
-            "谬因": { facility: "制造站", product: "源石材料", type: "常规", base: 0.20, star: 6, class: "术师" },
+            "谬因": { facility: "制造站", product: "源石材料", type: "常规", base: 0.30, star: 6, class: "术师" },
             "艾雅法拉": { facility: "制造站", product: "源石材料", type: "源石加工", base: 0.25, star: 6, class: "术师",
             avatar: AVATAR_BASE + 'char_???_eyjafjalla.png' },
-            "锡兰": { facility: "制造站", product: "源石材料", type: "源石加工", base: 0.20, combo: { "源石加工": 2 },
+            "锡兰": { facility: "制造站", product: "源石材料", type: "源石加工", base: 0.30, combo: { "源石加工": 2 },
             combo_bonus: 0.10, star: 5, class: "医疗", avatar: AVATAR_BASE + 'char_???_ceylon.png' },
-            "炎客": { facility: "制造站", product: "源石材料", type: "源石加工", base: 0.20, star: 5, class: "近卫",
-            avatar: AVATAR_BASE + 'char_???_flamebringer.png' },
 
             // 贸易站
             "银灰": { facility: "贸易站", product: "通用", type: "交际", base: 0.20, combo: { "交际": 2 },
@@ -892,7 +891,7 @@
             "拉普兰德": { facility: "贸易站", product: "通用", type: "企鹅物流", base: 0.20, combo: { "企鹅物流": 2 },
             combo_bonus: 0.15, star: 5, class: "近卫", avatar: AVATAR_BASE + 'char_???_lappland.png' },
             "但书": { facility: "贸易站", product: "通用", type: "谈判", base: 0.30, star: 5, class: "辅助" },
-            "可露希尔": { facility: "贸易站", product: "通用", type: "谈判", base: 0.30, star: 5, class: "辅助",
+            "可露希尔": { facility: "贸易站", product: "通用", type: "谈判", base: 0.30, star: 6, class: "先锋",
             avatar: AVATAR_BASE + 'char_???_closure.png' },
             "雷缪安": { facility: "贸易站", product: "通用", type: "特殊", base: 0.30, star: 5, class: "狙击" },
             "巫恋": { facility: "贸易站", product: "通用", type: "裁缝", base: 0.25, star: 5, class: "辅助",
@@ -931,33 +930,42 @@
             "摩根": { facility: "贸易站", product: "通用", type: "领导", base: 0.20, star: 5, class: "近卫",
             avatar: AVATAR_BASE + 'char_???_morgan.png' },
             "贝洛内": { facility: "贸易站", product: "通用", type: "领导", base: 0.20, star: 6, class: "近卫" },
+            // 新增贸易干员
+            "海蒂": { facility: "贸易站", product: "通用", type: "特殊", base: 0.35, star: 5, class: "辅助" },
+            "瑰盐": { facility: "贸易站", product: "通用", type: "特殊", base: 0.28, star: 5, class: "医疗" },
+            "雪雉": { facility: "贸易站", product: "通用", type: "特殊", base: 0.28, star: 5, class: "特种" },
         };
 
         // =====================================================================
-        //  统一设置精英化标签（依据新规则）
+        //  统一设置精英化标签
         // =====================================================================
         for (let name in OPERATORS) {
+            delete OPERATORS[name].elite;
+        }
+        for (let name in OPERATORS) {
             const op = OPERATORS[name];
-            // 先清空已有 elite
-            delete op.elite;
-            const star = op.star;
-            // 四星（除蛇屠箱）精英一
-            if (star === 4 && name !== '蛇屠箱') {
+            if (op.star === 4 && name !== '蛇屠箱') {
                 op.elite = '精英一';
             }
-            // 五星和六星（除推进之王、贝娜、薄绿）精英二
-            else if ((star === 5 || star === 6) && !['推进之王', '贝娜', '薄绿'].includes(name)) {
+        }
+        for (let name in OPERATORS) {
+            const op = OPERATORS[name];
+            if ((op.star === 5 || op.star === 6) && !['推进之王', '贝娜', '薄绿'].includes(name)) {
                 op.elite = '精英二';
             }
-            // 薄绿特殊处理：精英一（虽然它是五星，但我们需要精英一）
-            else if (name === '薄绿') {
-                op.elite = '精英一';
-            }
-            // 推进之王、贝娜不设置 elite（已删除）
+        }
+        if (OPERATORS['薄绿']) OPERATORS['薄绿'].elite = '精英一';
+        const eliteThreeStars = ['斑点', '史都华德', '芬', '炎熔', '月见夜'];
+        for (let name of eliteThreeStars) {
+            if (OPERATORS[name]) OPERATORS[name].elite = '精英一';
+        }
+        const removeElite = ['红豆', '杰西卡', '夜烟', '孑'];
+        for (let name of removeElite) {
+            if (OPERATORS[name]) delete OPERATORS[name].elite;
         }
 
         // =====================================================================
-        //  组合数据（完全保留）
+        //  组合数据
         // =====================================================================
 
         const AK_COMBOS = [
@@ -1018,7 +1026,7 @@
             { required: [
                     ["火神"],
                     ["泡泡"],
-                    ["圣约送葬"]
+                    ["圣约送葬人"]
                 ], bonus: 0.30 },
             { required: [
                     ["火神"],
@@ -1117,26 +1125,35 @@
         ];
 
         // =====================================================================
-        //  核心算法（调整：排除单挂黑名单，结果不展示效率）
+        //  核心算法（芬双设施支持，单挂黑名单，不显示效率）
         // =====================================================================
 
-        function getBaseEff(name, product) {
+        function getBaseEff(name, product, facilityType) {
             const op = OPERATORS[name];
             if (!op) return 0;
+            if (name === '芬') {
+                if (facilityType === '贸易站') return 0.15;
+                if (facilityType === '制造站' && product === '通用') return 0.20;
+                return 0.20;
+            }
             if (product && op.product !== "通用" && op.product !== product) return 0;
             return op.base;
         }
 
-        // 计算效率仍然保留内部使用，但最终不显示
         function calcTeamEff(team, facilityType, product) {
             let total = 0,
                 typeCount = {};
             const validTeam = team.filter(n => n in OPERATORS);
             for (let name of validTeam) {
                 const op = OPERATORS[name];
-                if (op.facility !== facilityType) return -1;
-                if (product && op.product !== "通用" && op.product !== product) return -1;
-                total += op.base;
+                if (op.facility !== facilityType && name !== '芬') return -1;
+                if (name === '芬') {
+                    if (facilityType === '贸易站' && op.facility !== '贸易站' && op.facility !== '制造站') return -1;
+                    if (facilityType === '制造站' && product !== '通用') return -1;
+                } else {
+                    if (product && op.product !== "通用" && op.product !== product) return -1;
+                }
+                total += getBaseEff(name, product, facilityType);
                 typeCount[op.type] = (typeCount[op.type] || 0) + 1;
             }
             for (let name of validTeam) {
@@ -1169,11 +1186,6 @@
             return total;
         }
 
-        // 工具：过滤掉单挂黑名单
-        function filterForbidden(arr) {
-            return arr.filter(name => !SINGLE_HANG_FORBIDDEN.has(name));
-        }
-
         function allocateTrade(availableSet, numStations) {
             const used = new Set();
             const teams = [];
@@ -1203,17 +1215,18 @@
                     if (available.has(a) && available.has(b) && !used.has(a) && !used.has(b)) {
                         const third = [...available].filter(n => {
                             if (used.has(n) || n === a || n === b) return false;
-                            return OPERATORS[n].facility === "贸易站";
+                            return (OPERATORS[n].facility === "贸易站" || n === '芬');
                         })
-                        .filter(n => !SINGLE_HANG_FORBIDDEN.has(n))  // 排除单挂黑名单
+                        .filter(n => !SINGLE_HANG_FORBIDDEN.has(n))
                         .sort((x, y) => {
                             const idxX = TRADE_TIERS.findIndex(t => t.includes(x));
                             const idxY = TRADE_TIERS.findIndex(t => t.includes(y));
-                            if (idxX === -1 && idxY === -1) return getBaseEff(y, "通用") - getBaseEff(x,
-                            "通用");
+                            if (idxX === -1 && idxY === -1) return getBaseEff(y, "通用", "贸易站") - getBaseEff(x,
+                            "通用", "贸易站");
                             if (idxX === -1) return 1;
                             if (idxY === -1) return -1;
-                            return idxX - idxY || getBaseEff(y, "通用") - getBaseEff(x, "通用");
+                            return idxX - idxY || getBaseEff(y, "通用", "贸易站") - getBaseEff(x, "通用",
+                            "贸易站");
                         })[0];
                         if (third) team = [a, b, third];
                         else team = [a, b];
@@ -1224,14 +1237,15 @@
                     const candidates = [];
                     for (let tier of TRADE_TIERS) {
                         for (let name of tier) {
-                            if (available.has(name) && !used.has(name) && OPERATORS[name].facility ===
-                                "贸易站" && !SINGLE_HANG_FORBIDDEN.has(name)) {
+                            if (available.has(name) && !used.has(name) && (OPERATORS[name].facility ===
+                                    "贸易站" || name === '芬') && !SINGLE_HANG_FORBIDDEN.has(name)) {
                                 candidates.push(name);
                             }
                         }
                     }
-                    const rest = [...available].filter(n => !used.has(n) && OPERATORS[n].facility === "贸易站" && !SINGLE_HANG_FORBIDDEN.has(n))
-                        .sort((a, b) => getBaseEff(b, "通用") - getBaseEff(a, "通用"));
+                    const rest = [...available].filter(n => !used.has(n) && (OPERATORS[n].facility === "贸易站" || n ===
+                            '芬') && !SINGLE_HANG_FORBIDDEN.has(n))
+                        .sort((a, b) => getBaseEff(b, "通用", "贸易站") - getBaseEff(a, "通用", "贸易站"));
                     for (let n of rest)
                         if (!candidates.includes(n)) candidates.push(n);
                     team = candidates.slice(0, 3);
@@ -1270,19 +1284,21 @@
                 const productCandidates = [...available].filter(n => {
                     if (used.has(n) || FIXED_ONLY_OPS.has(n)) return false;
                     const op = OPERATORS[n];
+                    if (n === '芬') return product === '通用';
                     return op && op.facility === "制造站" && op.product === product;
                 })
-                .filter(n => !SINGLE_HANG_FORBIDDEN.has(n)) // 排除单挂黑名单
-                .sort((a, b) => getBaseEff(b, product) - getBaseEff(a, product));
+                .filter(n => !SINGLE_HANG_FORBIDDEN.has(n))
+                .sort((a, b) => getBaseEff(b, product, "制造站") - getBaseEff(a, product, "制造站"));
                 let team = productCandidates.slice(0, 3);
                 if (team.length < 3) {
                     const genericCandidates = [...available].filter(n => {
                         if (used.has(n) || FIXED_ONLY_OPS.has(n)) return false;
                         const op = OPERATORS[n];
+                        if (n === '芬') return product === '通用';
                         return op && op.facility === "制造站" && op.product === "通用";
                     })
                     .filter(n => !SINGLE_HANG_FORBIDDEN.has(n))
-                    .sort((a, b) => getBaseEff(b, product) - getBaseEff(a, product));
+                    .sort((a, b) => getBaseEff(b, product, "制造站") - getBaseEff(a, product, "制造站"));
                     const needed = 3 - team.length;
                     team = team.concat(genericCandidates.slice(0, needed));
                 }
@@ -1327,7 +1343,7 @@
                         return op && op.facility === "制造站" && op.product === "源石材料";
                     })
                     .filter(n => !SINGLE_HANG_FORBIDDEN.has(n))
-                    .sort((a, b) => getBaseEff(b, "源石材料") - getBaseEff(a, "源石材料"));
+                    .sort((a, b) => getBaseEff(b, "源石材料", "制造站") - getBaseEff(a, "源石材料", "制造站"));
                     if (otherSource.length >= 2) team = [coreCandidate, ...otherSource.slice(0, 2)];
                 }
                 if (!team) {
@@ -1338,7 +1354,7 @@
                         return op && op.facility === "制造站" && op.product === "源石材料";
                     })
                     .filter(n => !SINGLE_HANG_FORBIDDEN.has(n))
-                    .sort((a, b) => getBaseEff(b, "源石材料") - getBaseEff(a, "源石材料"));
+                    .sort((a, b) => getBaseEff(b, "源石材料", "制造站") - getBaseEff(a, "源石材料", "制造站"));
                     if (pureSource.length >= 3) {
                         team = pureSource.slice(0, 3);
                     } else {
@@ -1348,7 +1364,7 @@
                             return op && op.facility === "制造站" && op.product === "通用";
                         })
                         .filter(n => !SINGLE_HANG_FORBIDDEN.has(n))
-                        .sort((a, b) => getBaseEff(b, "源石材料") - getBaseEff(a, "源石材料"));
+                        .sort((a, b) => getBaseEff(b, "源石材料", "制造站") - getBaseEff(a, "源石材料", "制造站"));
                         team = pureSource.concat(genericFill).slice(0, 3);
                     }
                 }
@@ -1401,7 +1417,7 @@
         }
 
         // =====================================================================
-        //  UI 交互（增加星级和职业筛选，并显示精英标签）
+        //  UI 交互
         // =====================================================================
 
         const FORBIDDEN_IN_333 = new Set(["可露希尔", "但书", "巫恋"]);
@@ -1447,7 +1463,6 @@
             return op.product === '通用' ? '通用' : op.product;
         }
 
-        // 渲染干员卡片（加入星级和职业筛选，并显示精英标签）
         function renderGrid() {
             const filter = currentFilter;
             const query = searchQuery.trim().toLowerCase();
@@ -1458,15 +1473,18 @@
                 if (query && !name.toLowerCase().includes(query)) return false;
                 const op = OPERATORS[name];
                 if (!op) return false;
-                // 产品/设施筛选
-                if (filter === '贸易站' && op.facility !== '贸易站') return false;
+                if (filter === '贸易站') {
+                    if (name === '芬') return true;
+                    if (op.facility !== '贸易站') return false;
+                }
+                if (filter === '通用') {
+                    if (name === '芬') return true;
+                    if (!(op.facility === '制造站' && op.product === '通用')) return false;
+                }
                 if (filter === '赤金' && !(op.facility === '制造站' && op.product === '赤金')) return false;
                 if (filter === '经验' && !(op.facility === '制造站' && op.product === '经验')) return false;
                 if (filter === '源石' && !(op.facility === '制造站' && op.product === '源石材料')) return false;
-                if (filter === '通用' && !(op.facility === '制造站' && op.product === '通用')) return false;
-                // 星级筛选
                 if (star !== 'all' && op.star !== parseInt(star)) return false;
-                // 职业筛选
                 if (cls !== 'all' && op.class !== cls) return false;
                 return true;
             });
@@ -1505,7 +1523,6 @@
                     avatarHtml = `<span class="fallback-text">${initial}</span>`;
                 }
 
-                // 构建 meta 显示：星级 + 职业 + 精英标签
                 let metaParts = [];
                 if (starStr) metaParts.push(`<span class="star">${starStr}</span>`);
                 if (cls) metaParts.push(`<span class="class-tag">${cls}</span>`);
@@ -1666,7 +1683,6 @@
                 const team1 = first.assignments[label] || ["无合适干员"];
                 const team2 = second.assignments[label] || ["无合适干员"];
 
-                // 不再显示效率，只显示干员组合
                 resultText += `▸ ${label}\n`;
                 resultText += `  第1班: ${team1.join(" + ")}\n`;
                 resultText += `  第2班: ${team2.join(" + ")}\n\n`;
@@ -1699,12 +1715,10 @@
                 el.addEventListener('click', () => { setFilter(el.dataset.filter); });
             });
 
-            // 星级筛选
             starFilterRow.querySelectorAll('.filter-tab').forEach(el => {
                 el.addEventListener('click', () => { setStarFilter(el.dataset.star); });
             });
 
-            // 职业筛选
             classFilterRow.querySelectorAll('.filter-tab').forEach(el => {
                 el.addEventListener('click', () => { setClassFilter(el.dataset.class); });
             });
