@@ -753,7 +753,7 @@
 
 
         // =====================================================================
-        //  干员数据（新增雪雉）
+        //  干员数据（裁度改为5星，效率0.25）
         // =====================================================================
 
         const FIXED_ONLY_OPS = new Set([
@@ -820,7 +820,7 @@
             "泡普卡": { facility: "制造站", product: "通用", type: "常规", base: 0.20, star: 3, class: "近卫" },
             "石棉": { facility: "制造站", product: "通用", type: "常规", base: 0.20, star: 5, class: "重装",
             avatar: AVATAR_BASE + 'char_???_asbestosis.png' },
-            "裁度": { facility: "制造站", product: "通用", type: "常规", base: 0.20, star: 4, class: "特种" },
+            "裁度": { facility: "制造站", product: "通用", type: "常规", base: 0.25, star: 5, class: "特种" }, // 改为5星，效率0.25
             "芬": { facility: "制造站", product: "通用", type: "常规", base: 0.20, star: 3, class: "先锋",
             avatar: AVATAR_BASE + 'char_???_fang.png' },
             "克洛斯": { facility: "制造站", product: "通用", type: "常规", base: 0.20, star: 3, class: "狙击",
@@ -1125,7 +1125,7 @@
         ];
 
         // =====================================================================
-        //  核心算法（芬双设施支持，单挂黑名单，不显示效率）
+        //  核心算法（修改 allocateTrade 增加但书/可露希尔特殊逻辑）
         // =====================================================================
 
         function getBaseEff(name, product, facilityType) {
@@ -1190,6 +1190,8 @@
             const used = new Set();
             const teams = [];
             const available = new Set(availableSet);
+
+            // 第一步：尝试固定组合
             for (let combo of TRADE_COMBOS) {
                 if (teams.length >= numStations) break;
                 let chosen = [],
@@ -1208,8 +1210,56 @@
                         available.delete(n); });
                 }
             }
+
+            // 第二步：若未满，尝试但书/可露希尔 + 2个高效率干员
             while (teams.length < numStations) {
                 let team = null;
+                // 定义获取贸易站高效率干员列表（排除但书、可露希尔，不在黑名单，且未使用）
+                const getHighEfficiency = (exclude) => {
+                    const candidates = [];
+                    for (let name of available) {
+                        if (used.has(name)) continue;
+                        if (SINGLE_HANG_FORBIDDEN.has(name)) continue;
+                        if (name === '但书' || name === '可露希尔') continue;
+                        if (exclude && exclude.has(name)) continue;
+                        const op = OPERATORS[name];
+                        if (op && op.facility === '贸易站' && op.base >= 0.28) { // 0.28及以上视为高效率
+                            candidates.push({ name, base: op.base });
+                        }
+                    }
+                    // 按效率降序，效率相同按名字
+                    candidates.sort((a, b) => b.base - a.base || a.name.localeCompare(b.name));
+                    return candidates.map(c => c.name);
+                };
+
+                // 尝试1: 但书 + 2个高效干员
+                if (available.has('但书') && !used.has('但书') && !SINGLE_HANG_FORBIDDEN.has('但书')) {
+                    const high = getHighEfficiency(new Set(['但书']));
+                    if (high.length >= 2) {
+                        team = ['但书', high[0], high[1]];
+                        // 加入团队
+                        teams.push(team);
+                        team.forEach(n => { used.add(n);
+                            available.delete(n); });
+                        continue;
+                    }
+                }
+
+                // 尝试2: 可露希尔 + 2个高效干员
+                if (available.has('可露希尔') && !used.has('可露希尔') && !SINGLE_HANG_FORBIDDEN.has('可露希尔')) {
+                    const high = getHighEfficiency(new Set(['可露希尔']));
+                    if (high.length >= 2) {
+                        team = ['可露希尔', high[0], high[1]];
+                        teams.push(team);
+                        team.forEach(n => { used.add(n);
+                            available.delete(n); });
+                        continue;
+                    }
+                }
+
+                // 第三步：如果上述都不满足，走原有补位逻辑
+                // 先尝试 TRADE_PAIRS
+                let pairTeam = null;
                 for (let pair of TRADE_PAIRS) {
                     const [a, b] = pair;
                     if (available.has(a) && available.has(b) && !used.has(a) && !used.has(b)) {
@@ -1228,31 +1278,37 @@
                             return idxX - idxY || getBaseEff(y, "通用", "贸易站") - getBaseEff(x, "通用",
                             "贸易站");
                         })[0];
-                        if (third) team = [a, b, third];
-                        else team = [a, b];
+                        if (third) pairTeam = [a, b, third];
+                        else pairTeam = [a, b];
                         break;
                     }
                 }
-                if (!team) {
-                    const candidates = [];
-                    for (let tier of TRADE_TIERS) {
-                        for (let name of tier) {
-                            if (available.has(name) && !used.has(name) && (OPERATORS[name].facility ===
-                                    "贸易站" || name === '芬') && !SINGLE_HANG_FORBIDDEN.has(name)) {
-                                candidates.push(name);
-                            }
+                if (pairTeam) {
+                    teams.push(pairTeam);
+                    pairTeam.forEach(n => { used.add(n);
+                        available.delete(n); });
+                    continue;
+                }
+
+                // 否则从TRADE_TIERS分层选取
+                const candidates = [];
+                for (let tier of TRADE_TIERS) {
+                    for (let name of tier) {
+                        if (available.has(name) && !used.has(name) && (OPERATORS[name].facility === "贸易站" || name ===
+                                '芬') && !SINGLE_HANG_FORBIDDEN.has(name)) {
+                            candidates.push(name);
                         }
                     }
-                    const rest = [...available].filter(n => !used.has(n) && (OPERATORS[n].facility === "贸易站" || n ===
-                            '芬') && !SINGLE_HANG_FORBIDDEN.has(n))
-                        .sort((a, b) => getBaseEff(b, "通用", "贸易站") - getBaseEff(a, "通用", "贸易站"));
-                    for (let n of rest)
-                        if (!candidates.includes(n)) candidates.push(n);
-                    team = candidates.slice(0, 3);
                 }
-                if (!team || team.length === 0) teams.push(["无合适干员"]);
-                else { teams.push(team);
-                    team.forEach(n => { used.add(n);
+                const rest = [...available].filter(n => !used.has(n) && (OPERATORS[n].facility === "贸易站" || n === '芬') &&
+                    !SINGLE_HANG_FORBIDDEN.has(n))
+                    .sort((a, b) => getBaseEff(b, "通用", "贸易站") - getBaseEff(a, "通用", "贸易站"));
+                for (let n of rest)
+                    if (!candidates.includes(n)) candidates.push(n);
+                const teamFinal = candidates.slice(0, 3);
+                if (teamFinal.length === 0) teams.push(["无合适干员"]);
+                else { teams.push(teamFinal);
+                    teamFinal.forEach(n => { used.add(n);
                         available.delete(n); }); }
             }
             return { teams, used };
