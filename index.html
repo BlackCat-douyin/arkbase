@@ -121,7 +121,7 @@
             }
         }
 
-        /* ========== 原应用样式（保持不变） ========== */
+        /* ========== 应用样式 ========== */
         .header {
             text-align: center;
             padding: 8px 0 18px;
@@ -339,7 +339,7 @@
             transition: all 0.2s ease;
             user-select: none;
             position: relative;
-            min-height: 76px;
+            min-height: 96px;
         }
         .op-card:hover {
             background: rgba(255, 255, 255, 0.05);
@@ -378,18 +378,18 @@
         }
 
         .op-avatar {
-            width: 42px;
-            height: 42px;
+            width: 56px;
+            height: 56px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.85rem;
+            font-size: 1.1rem;
             font-weight: 700;
             color: #fff;
             flex-shrink: 0;
             transition: box-shadow 0.2s;
-            margin-bottom: 3px;
+            margin-bottom: 4px;
             text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
             background-size: cover !important;
             background-position: center !important;
@@ -410,7 +410,7 @@
             left: 50%;
             transform: translate(-50%, -50%);
             font-weight: 700;
-            font-size: 0.9rem;
+            font-size: 1.2rem;
             color: #fff;
             text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
         }
@@ -425,6 +425,7 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            margin-top: 2px;
         }
         .op-meta {
             font-size: 0.55rem;
@@ -573,18 +574,141 @@
                 transform: translateY(0);
             }
         }
+
+        /* ========== 结果卡片样式 ========== */
         #result {
-            white-space: pre-wrap;
-            font-size: 0.82rem;
-            line-height: 1.7;
-            color: #c8c6c3;
-            background: rgba(0, 0, 0, 0.25);
-            border-radius: 10px;
-            padding: 12px 14px;
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            max-height: 460px;
+            padding: 8px 0;
+            max-height: 500px;
             overflow-y: auto;
-            font-family: "SF Mono", "Menlo", monospace;
+        }
+
+        .result-strategy {
+            font-size: 0.9rem;
+            color: #f0c45a;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding-bottom: 10px;
+            margin-bottom: 12px;
+        }
+
+        .result-station {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 10px 12px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .station-title {
+            font-weight: 600;
+            color: #f0c45a;
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .shift-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 4px 8px;
+            padding: 4px 0;
+        }
+
+        .shift-label {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.4);
+            min-width: 40px;
+            flex-shrink: 0;
+        }
+
+        .result-operator {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 2px 8px 2px 2px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: background 0.2s;
+        }
+        .result-operator:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .result-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: #2a2a3a;
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #fff;
+        }
+        .result-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .result-avatar .fallback {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .result-info {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.7rem;
+            color: #c8c6c3;
+            white-space: nowrap;
+        }
+        .result-info .rname {
+            max-width: 60px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .result-info .rstar {
+            color: #f0c45a;
+            font-size: 0.6rem;
+        }
+        .result-info .rclass {
+            background: rgba(255, 255, 255, 0.06);
+            padding: 0 4px;
+            border-radius: 4px;
+            font-size: 0.55rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .result-info .relite {
+            background: rgba(255, 215, 0, 0.12);
+            color: #ffd700;
+            padding: 0 4px;
+            border-radius: 4px;
+            font-size: 0.5rem;
+        }
+
+        .result-placeholder {
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.75rem;
+            font-style: italic;
+        }
+
+        .result-unused {
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.4);
+        }
+        .result-unused span {
+            color: #c8c6c3;
         }
 
         .empty-state {
@@ -624,7 +748,7 @@
             transform: translateX(-50%) translateY(0);
         }
 
-        /* ========== 响应式调整 ========== */
+        /* ========== 响应式 ========== */
         @media (max-width: 420px) {
             .splash-text .main {
                 font-size: 1.6rem;
@@ -635,12 +759,33 @@
             .tap-hint {
                 font-size: 0.65rem;
             }
+            .op-avatar {
+                width: 48px;
+                height: 48px;
+                font-size: 1rem;
+            }
+            .op-avatar .fallback-text {
+                font-size: 1rem;
+            }
+            .op-card {
+                min-height: 84px;
+            }
+            .result-info .rname {
+                max-width: 40px;
+            }
+            .result-avatar {
+                width: 24px;
+                height: 24px;
+            }
+            .result-operator {
+                padding: 1px 6px 1px 1px;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- ========== 开场动画遮罩（仅文字） ========== -->
+    <!-- ========== 开场动画遮罩 ========== -->
     <div id="splashOverlay">
         <div class="splash-text">
             <div class="main">🐾 抖音关注 <span class="highlight">黑猫</span> 谢谢喵！</div>
@@ -680,7 +825,6 @@
                 <button class="filter-tab" data-filter="源石"><span class="dot" style="background:#9c4dca;"></span>源石</button>
                 <button class="filter-tab" data-filter="通用"><span class="dot" style="background:#7a7a8a;"></span>通用</button>
             </div>
-            <!-- 星级和职业筛选（可点击） -->
             <div class="filter-row" id="starFilterRow">
                 <span style="color:rgba(255,255,255,0.3); font-size:0.7rem; margin-right:4px;">⭐</span>
                 <button class="filter-tab active" data-star="all">全部</button>
@@ -751,55 +895,46 @@
             setTimeout(dismiss, 4200);
         })();
 
-
         // =====================================================================
-        //  干员数据（裁度改为5星，效率0.25）
+        //  干员数据（名称、职业已修正）
         // =====================================================================
 
         const FIXED_ONLY_OPS = new Set([
             "火神", "泡泡", "多萝西", "娜斯提", "温蒂", "冬时", "森蚺", "槐琥", "涤火杰西卡", "贝娜",
             "Miss.Christine", "圣约送葬人", "卡达", "豆苗", "蛇屠箱", "黑角", "引星棘刺", "褐果",
-            "但书", "可露希尔", "雷缪安", "巫恋", "龙舌兰", "柏喙", "卡夫卡", "明椒", "折光", "琳琅诗怀雅",
+            "但书", "可露希尔", "蕾缪安", "巫恋", "龙舌兰", "柏喙", "卡夫卡", "明椒", "折光", "琳琅诗怀雅",
             "伺夜", "空弦", "深巡", "吉星", "石英", "维娜·维多利亚", "空爆", "月见夜", "古米", "齐尔查克",
-            "慕斯", "夜刀", "枚兰莎", "梓兰", "远山", "焰狐龙梓兰", "雷狼龙S空爆", "推进之王", "摩根", "贝洛内"
+            "慕斯", "夜刀", "玫兰莎", "梓兰", "远山", "焰狐龙梓兰", "雷狼龙S空爆", "推进之王", "摩根", "贝洛内"
         ]);
 
-        // 黑名单：不可作为单挂（补位填充）的干员
         const SINGLE_HANG_FORBIDDEN = new Set([
             "卡夫卡", "柏喙", "贝洛内", "德克萨斯", "拉普兰德",
             "孑", "明椒", "摩根", "推进之王", "琳琅诗怀雅", "崖心", "折光",
             "红云", "火神"
         ]);
 
-        const AVATAR_BASE = 'https://raw.githubusercontent.com/Aceship/Arknight-Images/main/avatars/';
-
         const OPERATORS = {
             // 制造站 - 赤金
             "清流": { facility: "制造站", product: "赤金", type: "自动化", base: 0.35, combo: { "自动化": 2 },
-            combo_bonus: 0.25, star: 4, class: "医疗", avatar: AVATAR_BASE + 'char_282_clears.png' },
+            combo_bonus: 0.25, star: 4, class: "医疗" },
             "温蒂": { facility: "制造站", product: "通用", type: "自动化", base: 0.20, combo: { "自动化": 2 },
-            combo_bonus: 0.10, star: 6, class: "特种", avatar: AVATAR_BASE + 'char_202_wendy.png' },
+            combo_bonus: 0.10, star: 6, class: "特种" },
             "森蚺": { facility: "制造站", product: "通用", type: "自动化", base: 0.20, combo: { "自动化": 2 },
-            combo_bonus: 0.10, star: 6, class: "重装", avatar: AVATAR_BASE + 'char_216_tomimi.png' },
+            combo_bonus: 0.10, star: 6, class: "重装" },
             "冬时": { facility: "制造站", product: "赤金", type: "自动化", base: 0.20, star: 4, class: "先锋" },
             "异客": { facility: "制造站", product: "通用", type: "自动化", base: 0.20, combo: { "自动化": 2 },
             combo_bonus: 0.05, star: 6, class: "术师" },
-            "砾": { facility: "制造站", product: "赤金", type: "常规", base: 0.35, star: 4, class: "特种",
-            avatar: AVATAR_BASE + 'char_118_gravel.png' },
-            "斑点": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 3, class: "重装",
-            avatar: AVATAR_BASE + 'char_106_spot.png' },
+            "砾": { facility: "制造站", product: "赤金", type: "常规", base: 0.35, star: 4, class: "特种" },
+            "斑点": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 3, class: "重装" },
             "苍苔": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 5, class: "近卫" },
-            "夜烟": { facility: "制造站", product: "赤金", type: "常规", base: 0.25, star: 4, class: "术师",
-            avatar: AVATAR_BASE + 'char_???_haze.png' },
-            "槐琥": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 5, class: "特种",
-            avatar: AVATAR_BASE + 'char_???_waai_fu.png' },
-            "淬羽赫默": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 5, class: "医疗" },
+            "夜烟": { facility: "制造站", product: "赤金", type: "常规", base: 0.25, star: 4, class: "术师" },
+            "槐琥": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 5, class: "特种" },
+            "淬羽赫默": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 5, class: "辅助" }, // 改为辅助
             "阿罗玛": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 5, class: "术师" },
             "杏仁": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 5, class: "特种" },
             "涤火杰西卡": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 6, class: "重装" },
-            "多萝西": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 6, class: "特种",
-            avatar: AVATAR_BASE + 'char_???_dorothy.png' },
-            "娜斯提": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 5, class: "近卫" },
+            "多萝西": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 6, class: "特种" },
+            "娜斯提": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 5, class: "辅助" }, // 改为辅助
             "引星棘刺": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 6, class: "特种" },
             "温米": { facility: "制造站", product: "赤金", type: "常规", base: 0.25, star: 5, class: "术师" },
 
@@ -808,60 +943,44 @@
             "杰西卡": { facility: "制造站", product: "通用", type: "常规", base: 0.25, star: 4, class: "狙击" },
             "至简": { facility: "制造站", product: "通用", type: "常规", base: 0.30, star: 5, class: "术师" },
             "调香师": { facility: "制造站", product: "通用", type: "常规", base: 0.25, star: 4, class: "医疗" },
-            "萝比拉塔": { facility: "制造站", product: "通用", type: "常规", base: 0.30, star: 4, class: "辅助" },
+            "罗比菈塔": { facility: "制造站", product: "通用", type: "常规", base: 0.30, star: 4, class: "辅助" }, // 原名萝比拉塔
             "史都华德": { facility: "制造站", product: "通用", type: "常规", base: 0.25, star: 3, class: "术师" },
             "铅踝": { facility: "制造站", product: "通用", type: "常规", base: 0.25, star: 4, class: "狙击" },
-            "水月": { facility: "制造站", product: "通用", type: "常规", base: 0.25, star: 6, class: "特种",
-            avatar: AVATAR_BASE + 'char_???_mizuki.png' },
-            "梅尔": { facility: "制造站", product: "通用", type: "常规", base: 0.25, star: 5, class: "辅助",
-            avatar: AVATAR_BASE + 'char_???_mayer.png' },
-            "玛露希尔": { facility: "制造站", product: "通用", type: "常规", base: 0.25, star: 5, class: "术师" },
-            "维伊": { facility: "制造站", product: "通用", type: "常规", base: 0.25, star: 6, class: "近卫" },
+            "水月": { facility: "制造站", product: "通用", type: "常规", base: 0.25, star: 6, class: "特种" },
+            "梅尔": { facility: "制造站", product: "通用", type: "常规", base: 0.25, star: 5, class: "辅助" },
+            "玛露西尔": { facility: "制造站", product: "通用", type: "常规", base: 0.25, star: 5, class: "术师" }, // 原名玛露希尔
+            "维伊": { facility: "制造站", product: "通用", type: "常规", base: 0.25, star: 6, class: "术师" }, // 改为术师
             "泡普卡": { facility: "制造站", product: "通用", type: "常规", base: 0.20, star: 3, class: "近卫" },
-            "石棉": { facility: "制造站", product: "通用", type: "常规", base: 0.20, star: 5, class: "重装",
-            avatar: AVATAR_BASE + 'char_???_asbestosis.png' },
-            "裁度": { facility: "制造站", product: "通用", type: "常规", base: 0.25, star: 5, class: "特种" }, // 改为5星，效率0.25
-            "芬": { facility: "制造站", product: "通用", type: "常规", base: 0.20, star: 3, class: "先锋",
-            avatar: AVATAR_BASE + 'char_???_fang.png' },
-            "克洛斯": { facility: "制造站", product: "通用", type: "常规", base: 0.20, star: 3, class: "狙击",
-            avatar: AVATAR_BASE + 'char_???_kroos.png' },
+            "石棉": { facility: "制造站", product: "通用", type: "常规", base: 0.20, star: 5, class: "重装" },
+            "裁度": { facility: "制造站", product: "通用", type: "常规", base: 0.25, star: 5, class: "特种" },
+            "芬": { facility: "制造站", product: "通用", type: "常规", base: 0.20, star: 3, class: "先锋" },
+            "克洛丝": { facility: "制造站", product: "通用", type: "常规", base: 0.20, star: 3, class: "狙击" }, // 原名克洛斯
             "雪猎": { facility: "制造站", product: "通用", type: "常规", base: 0.35, star: 5, class: "狙击" },
 
             // 制造站 - 经验
             "食铁兽": { facility: "制造站", product: "经验", type: "常规", base: 0.35, star: 5, class: "特种" },
             "断罪者": { facility: "制造站", product: "经验", type: "常规", base: 0.35, star: 4, class: "近卫" },
             "Castle-3": { facility: "制造站", product: "经验", type: "常规", base: 0.30, star: 1, class: "近卫" },
-            "刻俄柏": { facility: "制造站", product: "经验", type: "经验专精", base: 0.30, star: 6, class: "术师",
-            avatar: AVATAR_BASE + 'char_???_ceobe.png' },
-            "帕拉斯": { facility: "制造站", product: "经验", type: "经验专精", base: 0.30, star: 6, class: "近卫",
-            avatar: AVATAR_BASE + 'char_???_pallas.png' },
-            "稀音": { facility: "制造站", product: "经验", type: "经验专精", base: 0.30, star: 5, class: "辅助",
-            avatar: AVATAR_BASE + 'char_???_scene.png' },
-            "红云": { facility: "制造站", product: "经验", type: "经验专精", base: 0.25, star: 4, class: "狙击",
-            avatar: AVATAR_BASE + 'char_???_red.png' },
+            "刻俄柏": { facility: "制造站", product: "经验", type: "经验专精", base: 0.30, star: 6, class: "术师" },
+            "帕拉斯": { facility: "制造站", product: "经验", type: "经验专精", base: 0.30, star: 6, class: "近卫" },
+            "稀音": { facility: "制造站", product: "经验", type: "经验专精", base: 0.30, star: 5, class: "辅助" },
+            "红云": { facility: "制造站", product: "经验", type: "经验专精", base: 0.25, star: 4, class: "狙击" },
             "酒神": { facility: "制造站", product: "经验", type: "经验专精", base: 0.32, star: 6, class: "辅助" },
             "Miss.Christine": { facility: "制造站", product: "经验", type: "经验专精", base: 0.30, star: 5,
             class: "术师" },
             "卡达": { facility: "制造站", product: "经验", type: "经验专精", base: 0.25, star: 4, class: "术师" },
-            "豆苗": { facility: "制造站", product: "经验", type: "经验专精", base: 0.20, star: 4, class: "先锋",
-            avatar: AVATAR_BASE + 'char_???_beanstalk.png' },
-            "黑角": { facility: "制造站", product: "经验", type: "经验专精", base: 0.15, star: 2, class: "重装",
-            avatar: AVATAR_BASE + 'char_???_noir_corne.png' },
-            "蛇屠箱": { facility: "制造站", product: "经验", type: "经验专精", base: 0.20, star: 4, class: "重装",
-            avatar: AVATAR_BASE + 'char_???_cuora.png' },
+            "豆苗": { facility: "制造站", product: "经验", type: "经验专精", base: 0.20, star: 4, class: "先锋" },
+            "黑角": { facility: "制造站", product: "经验", type: "经验专精", base: 0.15, star: 2, class: "重装" },
+            "蛇屠箱": { facility: "制造站", product: "经验", type: "经验专精", base: 0.20, star: 4, class: "重装" },
             "怒潮凛冬": { facility: "制造站", product: "经验", type: "常规", base: 0.30, star: 6, class: "近卫" },
             "裂响": { facility: "制造站", product: "经验", type: "常规", base: 0.28, star: 5, class: "术师" },
             "弑君者": { facility: "制造站", product: "经验", type: "常规", base: 0.30, star: 5, class: "特种" },
             "机械师": { facility: "制造站", product: "经验", type: "常规", base: 0.25, star: 6, class: "重装" },
-            "白雪": { facility: "制造站", product: "经验", type: "常规", base: 0.20, star: 4, class: "狙击",
-            avatar: AVATAR_BASE + 'char_???_shirayuki.png' },
-            "霜叶": { facility: "制造站", product: "经验", type: "常规", base: 0.20, star: 4, class: "近卫",
-            avatar: AVATAR_BASE + 'char_???_frostleaf.png' },
-            "红豆": { facility: "制造站", product: "经验", type: "常规", base: 0.15, star: 4, class: "先锋",
-            avatar: AVATAR_BASE + 'char_???_vigna.png' },
+            "白雪": { facility: "制造站", product: "经验", type: "常规", base: 0.20, star: 4, class: "狙击" },
+            "霜叶": { facility: "制造站", product: "经验", type: "常规", base: 0.20, star: 4, class: "近卫" },
+            "红豆": { facility: "制造站", product: "经验", type: "常规", base: 0.15, star: 4, class: "先锋" },
             "圣约送葬人": { facility: "制造站", product: "经验", type: "常规", base: 0.30, star: 6, class: "近卫" },
-            "火神": { facility: "制造站", product: "通用", type: "经验专精", base: 0.35, star: 5, class: "重装",
-            avatar: AVATAR_BASE + 'char_???_vulcan.png' },
+            "火神": { facility: "制造站", product: "通用", type: "经验专精", base: 0.35, star: 5, class: "重装" },
             "泡泡": { facility: "制造站", product: "通用", type: "经验专精", base: 0.30, star: 4, class: "重装" },
             "贝娜": { facility: "制造站", product: "通用", type: "经验专精", base: 0.25, star: 5, class: "特种" },
 
@@ -872,32 +991,28 @@
             "薄绿": { facility: "制造站", product: "源石材料", type: "常规", base: 0.20, star: 5, class: "术师" },
             "月见夜": { facility: "制造站", product: "源石材料", type: "常规", base: 0.20, star: 3, class: "近卫" },
             "谬因": { facility: "制造站", product: "源石材料", type: "常规", base: 0.30, star: 6, class: "术师" },
-            "艾雅法拉": { facility: "制造站", product: "源石材料", type: "源石加工", base: 0.25, star: 6, class: "术师",
-            avatar: AVATAR_BASE + 'char_???_eyjafjalla.png' },
+            "艾雅法拉": { facility: "制造站", product: "源石材料", type: "源石加工", base: 0.25, star: 6, class: "术师" },
             "锡兰": { facility: "制造站", product: "源石材料", type: "源石加工", base: 0.30, combo: { "源石加工": 2 },
-            combo_bonus: 0.10, star: 5, class: "医疗", avatar: AVATAR_BASE + 'char_???_ceylon.png' },
+            combo_bonus: 0.10, star: 5, class: "医疗" },
 
             // 贸易站
             "银灰": { facility: "贸易站", product: "通用", type: "交际", base: 0.20, combo: { "交际": 2 },
-            combo_bonus: 0.15, star: 6, class: "近卫", avatar: AVATAR_BASE + 'char_???_silverash.png' },
+            combo_bonus: 0.15, star: 6, class: "近卫" },
             "崖心": { facility: "贸易站", product: "通用", type: "交际", base: 0.20, combo: { "交际": 2 },
-            combo_bonus: 0.15, star: 5, class: "特种", avatar: AVATAR_BASE + 'char_???_cliffheart.png' },
+            combo_bonus: 0.15, star: 5, class: "特种" },
             "孑": { facility: "贸易站", product: "通用", type: "裁缝", base: 0.25, combo: { "裁缝": 1 },
-            combo_bonus: 0.10, star: 4, class: "特种", avatar: AVATAR_BASE + 'char_???_jaye.png' },
+            combo_bonus: 0.10, star: 4, class: "特种" },
             "能天使": { facility: "贸易站", product: "通用", type: "企鹅物流", base: 0.20, combo: { "企鹅物流": 2 },
-            combo_bonus: 0.15, star: 6, class: "狙击", avatar: AVATAR_BASE + 'char_???_exusiai.png' },
+            combo_bonus: 0.15, star: 6, class: "狙击" },
             "德克萨斯": { facility: "贸易站", product: "通用", type: "企鹅物流", base: 0.20, combo: { "企鹅物流": 2 },
-            combo_bonus: 0.15, star: 5, class: "先锋", avatar: AVATAR_BASE + 'char_???_texas.png' },
+            combo_bonus: 0.15, star: 5, class: "先锋" },
             "拉普兰德": { facility: "贸易站", product: "通用", type: "企鹅物流", base: 0.20, combo: { "企鹅物流": 2 },
-            combo_bonus: 0.15, star: 5, class: "近卫", avatar: AVATAR_BASE + 'char_???_lappland.png' },
+            combo_bonus: 0.15, star: 5, class: "近卫" },
             "但书": { facility: "贸易站", product: "通用", type: "谈判", base: 0.30, star: 5, class: "辅助" },
-            "可露希尔": { facility: "贸易站", product: "通用", type: "谈判", base: 0.30, star: 6, class: "先锋",
-            avatar: AVATAR_BASE + 'char_???_closure.png' },
-            "雷缪安": { facility: "贸易站", product: "通用", type: "特殊", base: 0.30, star: 5, class: "狙击" },
-            "巫恋": { facility: "贸易站", product: "通用", type: "裁缝", base: 0.25, star: 5, class: "辅助",
-            avatar: AVATAR_BASE + 'char_???_witch.png' },
-            "龙舌兰": { facility: "贸易站", product: "通用", type: "裁缝", base: 0.30, star: 5, class: "近卫",
-            avatar: AVATAR_BASE + 'char_???_tequila.png' },
+            "可露希尔": { facility: "贸易站", product: "通用", type: "谈判", base: 0.30, star: 6, class: "先锋" },
+            "蕾缪安": { facility: "贸易站", product: "通用", type: "特殊", base: 0.30, star: 5, class: "狙击" }, // 原名雷缪安
+            "巫恋": { facility: "贸易站", product: "通用", type: "裁缝", base: 0.25, star: 5, class: "辅助" },
+            "龙舌兰": { facility: "贸易站", product: "通用", type: "裁缝", base: 0.30, star: 5, class: "近卫" },
             "柏喙": { facility: "贸易站", product: "通用", type: "裁缝", base: 0.20, star: 5, class: "近卫" },
             "卡夫卡": { facility: "贸易站", product: "通用", type: "裁缝", base: 0.25, star: 5, class: "特种" },
             "明椒": { facility: "贸易站", product: "通用", type: "裁缝", base: 0.20, star: 5, class: "医疗" },
@@ -909,28 +1024,19 @@
             "吉星": { facility: "贸易站", product: "通用", type: "常规", base: 0.25, star: 5, class: "狙击" },
             "石英": { facility: "贸易站", product: "通用", type: "常规", base: 0.25, star: 4, class: "近卫" },
             "维娜·维多利亚": { facility: "贸易站", product: "通用", type: "常规", base: 0.20, star: 6, class: "近卫" },
-            "空爆": { facility: "贸易站", product: "通用", type: "常规", base: 0.20, star: 3, class: "狙击",
-            avatar: AVATAR_BASE + 'char_???_catapult.png' },
-            "古米": { facility: "贸易站", product: "通用", type: "常规", base: 0.20, star: 4, class: "重装",
-            avatar: AVATAR_BASE + 'char_???_gummy.png' },
-            "齐尔查克": { facility: "贸易站", product: "通用", type: "常规", base: 0.20, star: 4, class: "特种" },
-            "慕斯": { facility: "贸易站", product: "通用", type: "常规", base: 0.15, star: 4, class: "近卫",
-            avatar: AVATAR_BASE + 'char_???_mousse.png' },
-            "夜刀": { facility: "贸易站", product: "通用", type: "常规", base: 0.15, star: 2, class: "先锋",
-            avatar: AVATAR_BASE + 'char_???_yato.png' },
-            "枚兰莎": { facility: "贸易站", product: "通用", type: "常规", base: 0.15, star: 3, class: "近卫" },
-            "梓兰": { facility: "贸易站", product: "通用", type: "常规", base: 0.15, star: 3, class: "术师",
-            avatar: AVATAR_BASE + 'char_???_orchid.png' },
-            "远山": { facility: "贸易站", product: "通用", type: "常规", base: 0.15, star: 4, class: "术师",
-            avatar: AVATAR_BASE + 'char_???_gitano.png' },
-            "焰狐龙梓兰": { facility: "贸易站", product: "通用", type: "特殊", base: 0.25, star: 6, class: "术师" },
+            "空爆": { facility: "贸易站", product: "通用", type: "常规", base: 0.20, star: 3, class: "狙击" },
+            "古米": { facility: "贸易站", product: "通用", type: "常规", base: 0.20, star: 4, class: "重装" },
+            "齐尔查克": { facility: "贸易站", product: "通用", type: "常规", base: 0.20, star: 4, class: "先锋" }, // 改为先锋
+            "慕斯": { facility: "贸易站", product: "通用", type: "常规", base: 0.15, star: 4, class: "近卫" },
+            "夜刀": { facility: "贸易站", product: "通用", type: "常规", base: 0.15, star: 2, class: "先锋" },
+            "玫兰莎": { facility: "贸易站", product: "通用", type: "常规", base: 0.15, star: 3, class: "近卫" }, // 原名枚兰莎
+            "梓兰": { facility: "贸易站", product: "通用", type: "常规", base: 0.15, star: 3, class: "辅助" },
+            "远山": { facility: "贸易站", product: "通用", type: "常规", base: 0.15, star: 4, class: "术师" },
+            "焰狐龙梓兰": { facility: "贸易站", product: "通用", type: "特殊", base: 0.25, star: 6, class: "狙击" },
             "雷狼龙S空爆": { facility: "贸易站", product: "通用", type: "特殊", base: 0.25, star: 5, class: "近卫" },
-            "推进之王": { facility: "贸易站", product: "通用", type: "领导", base: 0.25, star: 6, class: "先锋",
-            avatar: AVATAR_BASE + 'char_???_siege.png' },
-            "摩根": { facility: "贸易站", product: "通用", type: "领导", base: 0.20, star: 5, class: "近卫",
-            avatar: AVATAR_BASE + 'char_???_morgan.png' },
+            "推进之王": { facility: "贸易站", product: "通用", type: "领导", base: 0.25, star: 6, class: "先锋" },
+            "摩根": { facility: "贸易站", product: "通用", type: "领导", base: 0.20, star: 5, class: "近卫" },
             "贝洛内": { facility: "贸易站", product: "通用", type: "领导", base: 0.20, star: 6, class: "近卫" },
-            // 新增贸易干员
             "海蒂": { facility: "贸易站", product: "通用", type: "特殊", base: 0.35, star: 5, class: "辅助" },
             "瑰盐": { facility: "贸易站", product: "通用", type: "特殊", base: 0.28, star: 5, class: "医疗" },
             "雪雉": { facility: "贸易站", product: "通用", type: "特殊", base: 0.28, star: 5, class: "特种" },
@@ -965,7 +1071,7 @@
         }
 
         // =====================================================================
-        //  组合数据
+        //  组合数据（更新名称）
         // =====================================================================
 
         const AK_COMBOS = [
@@ -1043,7 +1149,7 @@
         const TRADE_COMBOS = [
             { required: [
                     ["但书"],
-                    ["雷缪安"],
+                    ["蕾缪安"], // 原雷缪安
                     ["能天使"]
                 ], bonus: 0.30 },
             { required: [
@@ -1068,7 +1174,7 @@
                 ], bonus: 0.25 },
             { required: [
                     ["可露希尔"],
-                    ["雷缪安"],
+                    ["蕾缪安"], // 原雷缪安
                     ["能天使"]
                 ], bonus: 0.30 },
             { required: [
@@ -1115,17 +1221,17 @@
 
         const TRADE_PAIRS = [
             ["伺夜", "贝洛内"],
-            ["雷缪安", "能天使"],
+            ["蕾缪安", "能天使"], // 原雷缪安
             ["焰狐龙梓兰", "雷狼龙S空爆"]
         ];
         const TRADE_TIERS = [
             ["伺夜", "空弦", "深巡", "吉星", "石英"],
             ["能天使", "维娜·维多利亚", "空爆", "月见夜", "古米", "齐尔查克"],
-            ["慕斯", "夜刀", "芬", "枚兰莎", "梓兰", "远山"]
+            ["慕斯", "夜刀", "芬", "玫兰莎", "梓兰", "远山"] // 枚兰莎→玫兰莎
         ];
 
         // =====================================================================
-        //  核心算法（修改 allocateTrade 增加但书/可露希尔特殊逻辑）
+        //  核心算法
         // =====================================================================
 
         function getBaseEff(name, product, facilityType) {
@@ -1191,7 +1297,6 @@
             const teams = [];
             const available = new Set(availableSet);
 
-            // 第一步：尝试固定组合
             for (let combo of TRADE_COMBOS) {
                 if (teams.length >= numStations) break;
                 let chosen = [],
@@ -1211,10 +1316,8 @@
                 }
             }
 
-            // 第二步：若未满，尝试但书/可露希尔 + 2个高效率干员
             while (teams.length < numStations) {
                 let team = null;
-                // 定义获取贸易站高效率干员列表（排除但书、可露希尔，不在黑名单，且未使用）
                 const getHighEfficiency = (exclude) => {
                     const candidates = [];
                     for (let name of available) {
@@ -1223,21 +1326,18 @@
                         if (name === '但书' || name === '可露希尔') continue;
                         if (exclude && exclude.has(name)) continue;
                         const op = OPERATORS[name];
-                        if (op && op.facility === '贸易站' && op.base >= 0.28) { // 0.28及以上视为高效率
+                        if (op && op.facility === '贸易站' && op.base >= 0.28) {
                             candidates.push({ name, base: op.base });
                         }
                     }
-                    // 按效率降序，效率相同按名字
                     candidates.sort((a, b) => b.base - a.base || a.name.localeCompare(b.name));
                     return candidates.map(c => c.name);
                 };
 
-                // 尝试1: 但书 + 2个高效干员
                 if (available.has('但书') && !used.has('但书') && !SINGLE_HANG_FORBIDDEN.has('但书')) {
                     const high = getHighEfficiency(new Set(['但书']));
                     if (high.length >= 2) {
                         team = ['但书', high[0], high[1]];
-                        // 加入团队
                         teams.push(team);
                         team.forEach(n => { used.add(n);
                             available.delete(n); });
@@ -1245,7 +1345,6 @@
                     }
                 }
 
-                // 尝试2: 可露希尔 + 2个高效干员
                 if (available.has('可露希尔') && !used.has('可露希尔') && !SINGLE_HANG_FORBIDDEN.has('可露希尔')) {
                     const high = getHighEfficiency(new Set(['可露希尔']));
                     if (high.length >= 2) {
@@ -1257,8 +1356,6 @@
                     }
                 }
 
-                // 第三步：如果上述都不满足，走原有补位逻辑
-                // 先尝试 TRADE_PAIRS
                 let pairTeam = null;
                 for (let pair of TRADE_PAIRS) {
                     const [a, b] = pair;
@@ -1290,7 +1387,6 @@
                     continue;
                 }
 
-                // 否则从TRADE_TIERS分层选取
                 const candidates = [];
                 for (let tier of TRADE_TIERS) {
                     for (let name of tier) {
@@ -1463,13 +1559,11 @@
         }
 
         // =====================================================================
-        //  头像辅助
+        //  头像辅助 - 使用本地 picture 文件夹
         // =====================================================================
 
         function getAvatarUrl(name) {
-            const op = OPERATORS[name];
-            if (op && op.avatar) return op.avatar;
-            return null;
+            return 'picture/' + name + '.jpg';
         }
 
         // =====================================================================
@@ -1704,6 +1798,10 @@
             renderGrid();
         }
 
+        // =====================================================================
+        //  生成排班结果（可视化）
+        // =====================================================================
+
         function generatePlan() {
             const owned = Array.from(selectedOps);
             if (owned.length === 0) {
@@ -1728,7 +1826,43 @@
 
             const { first, second } = assignBothShifts(owned, tradeCount, akCount, oriCount, expCount);
 
-            let resultText = `策略：${strategy}\n\n`;
+            function buildOperatorHtml(name) {
+                if (name === '无合适干员') {
+                    return `<span class="result-placeholder">无合适干员</span>`;
+                }
+                const op = OPERATORS[name];
+                if (!op) {
+                    return `<span class="result-placeholder">${name}</span>`;
+                }
+                const avatarUrl = getAvatarUrl(name);
+                const starStr = op.star ? '★'.repeat(op.star) : '';
+                const classTag = op.class || '';
+                const eliteTag = op.elite || '';
+                const initial = name.charAt(0).toUpperCase();
+
+                let avatarHtml = '';
+                if (avatarUrl) {
+                    avatarHtml =
+                        `<img src="${avatarUrl}" alt="${name}" onerror="this.parentElement.innerHTML='<span class=\\'fallback\\'>${initial}</span>'; this.parentElement.style.background='';">`;
+                } else {
+                    avatarHtml = `<span class="fallback">${initial}</span>`;
+                }
+
+                return `
+                        <span class="result-operator">
+                            <span class="result-avatar">${avatarHtml}</span>
+                            <span class="result-info">
+                                <span class="rname" title="${name}">${name}</span>
+                                ${starStr ? `<span class="rstar">${starStr}</span>` : ''}
+                                ${classTag ? `<span class="rclass">${classTag}</span>` : ''}
+                                ${eliteTag ? `<span class="relite">${eliteTag}</span>` : ''}
+                            </span>
+                        </span>
+                    `;
+            }
+
+            let resultHtml = `<div class="result-strategy">📋 策略：${strategy}</div>`;
+
             const order = [];
             for (let i = 1; i <= tradeCount; i++) order.push(`贸易站${i}`);
             for (let i = 1; i <= akCount; i++) order.push(`赤金制造站${i}`);
@@ -1739,18 +1873,32 @@
                 const team1 = first.assignments[label] || ["无合适干员"];
                 const team2 = second.assignments[label] || ["无合适干员"];
 
-                resultText += `▸ ${label}\n`;
-                resultText += `  第1班: ${team1.join(" + ")}\n`;
-                resultText += `  第2班: ${team2.join(" + ")}\n\n`;
+                resultHtml += `
+                        <div class="result-station">
+                            <div class="station-title">${label}</div>
+                            <div class="shift-row">
+                                <span class="shift-label">第1班：</span>
+                                ${team1.map(name => buildOperatorHtml(name)).join('')}
+                            </div>
+                            <div class="shift-row">
+                                <span class="shift-label">第2班：</span>
+                                ${team2.map(name => buildOperatorHtml(name)).join('')}
+                            </div>
+                        </div>
+                    `;
             }
 
             const allUsed = new Set([...first.used, ...second.used]);
             const unused = owned.filter(op => !allUsed.has(op));
             if (unused.length > 0) {
-                resultText += `完全未使用的干员：${unused.join("、")}`;
+                resultHtml += `
+                        <div class="result-unused">
+                            完全未使用的干员：<span>${unused.join('、')}</span>
+                        </div>
+                    `;
             }
 
-            resultEl.textContent = resultText;
+            resultEl.innerHTML = resultHtml;
             resultCard.style.display = 'block';
             resultCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
             showToast(`✅ 方案已生成，共使用 ${allUsed.size} 名干员`, 1800);
