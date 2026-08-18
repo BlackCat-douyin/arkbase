@@ -5,787 +5,132 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>明日方舟基建排版器</title>
     <style>
-        /* ========== 全局重置 & 方舟主题 ========== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin:0; padding:0; box-sizing:border-box; }
         body {
-            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
-            background: #0b0b1a;
-            color: #e8e6e3;
-            padding: 16px 12px 40px;
-            min-height: 100vh;
-            background-image: radial-gradient(ellipse at 50% 0%, #1a1a3e 0%, #0b0b1a 70%);
-            overflow-x: hidden;
+            font-family:"Microsoft YaHei","PingFang SC",sans-serif;
+            background:#0b0b1a;
+            color:#e8e6e3;
+            padding:16px 12px 40px;
+            min-height:100vh;
+            background-image:radial-gradient(ellipse at 50% 0%, #1a1a3e 0%, #0b0b1a 70%);
+            overflow-x:hidden;
         }
-
-        ::-webkit-scrollbar {
-            width: 4px;
-            height: 4px;
-        }
-        ::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(240, 196, 90, 0.4);
-            border-radius: 8px;
-        }
-
-        .app-wrap {
-            max-width: 480px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 1;
-        }
-
-        /* ========== 开场动画遮罩（仅文字） ========== */
+        ::-webkit-scrollbar { width:4px; height:4px; }
+        ::-webkit-scrollbar-track { background:rgba(255,255,255,0.05); border-radius:8px; }
+        ::-webkit-scrollbar-thumb { background:rgba(240,196,90,0.4); border-radius:8px; }
+        .app-wrap { max-width:480px; margin:0 auto; position:relative; z-index:1; }
         #splashOverlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(ellipse at 50% 60%, #1a1a3e 0%, #0b0b1a 80%);
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: opacity 0.9s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.9s ease;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-        #splashOverlay.hide {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
-
-        .splash-text {
-            text-align: center;
-            opacity: 0;
-            animation: textFadeIn 1.2s ease 0.6s forwards;
-        }
-        .splash-text .main {
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: #f0c45a;
-            text-shadow: 0 0 40px rgba(240, 196, 90, 0.2), 0 4px 20px rgba(0, 0, 0, 0.6);
-            letter-spacing: 2px;
-            line-height: 1.3;
-        }
-        .splash-text .sub {
-            font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.3);
-            margin-top: 8px;
-            letter-spacing: 4px;
-            font-weight: 300;
-        }
-        .splash-text .highlight {
-            color: #ff6b8a;
-            text-shadow: 0 0 30px rgba(255, 107, 138, 0.3);
-        }
-
-        @keyframes textFadeIn {
-            0% {
-                opacity: 0;
-                transform: translateY(16px) scale(0.96);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        .tap-hint {
-            margin-top: 28px;
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.15);
-            letter-spacing: 2px;
-            animation: pulseHint 2s ease-in-out infinite;
-        }
-        @keyframes pulseHint {
-            0%,
-            100% {
-                opacity: 0.15;
-                transform: scale(1);
-            }
-            50% {
-                opacity: 0.5;
-                transform: scale(1.05);
-            }
-        }
-
-        /* ========== 应用样式 ========== */
-        .header {
-            text-align: center;
-            padding: 8px 0 18px;
-            position: relative;
-        }
-        .header::after {
-            content: "";
-            display: block;
-            width: 60px;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, #f0c45a, transparent);
-            margin: 10px auto 0;
-            border-radius: 4px;
-        }
-        .header h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #f0c45a;
-            letter-spacing: 2px;
-            text-shadow: 0 0 30px rgba(240, 196, 90, 0.15);
-        }
-        .header h1 small {
-            font-size: 0.7rem;
-            font-weight: 400;
-            color: rgba(255, 255, 255, 0.35);
-            display: block;
-            margin-top: 2px;
-        }
-
-        .card {
-            background: rgba(22, 33, 62, 0.75);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border-radius: 16px;
-            padding: 16px 14px;
-            margin-bottom: 14px;
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-        }
-        .card-title {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #f0c45a;
-            letter-spacing: 1px;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .card-title .badge {
-            background: rgba(240, 196, 90, 0.15);
-            color: #f0c45a;
-            font-size: 0.65rem;
-            padding: 0 10px;
-            border-radius: 20px;
-            font-weight: 400;
-        }
-
-        .layout-group {
-            display: flex;
-            gap: 10px;
-        }
-        .layout-btn {
-            flex: 1;
-            padding: 10px 0;
-            border: 2px solid rgba(255, 255, 255, 0.08);
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.02);
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.25s;
-            text-align: center;
-            font-family: inherit;
-        }
-        .layout-btn:hover {
-            border-color: rgba(240, 196, 90, 0.3);
-            color: #e8e6e3;
-        }
-        .layout-btn.active {
-            border-color: #f0c45a;
-            background: rgba(240, 196, 90, 0.08);
-            color: #f0c45a;
-            box-shadow: 0 0 20px rgba(240, 196, 90, 0.06);
-        }
-        .layout-btn .sub {
-            display: block;
-            font-size: 0.6rem;
-            font-weight: 400;
-            opacity: 0.5;
-            margin-top: 2px;
-        }
-        .layout-btn.active .sub {
-            opacity: 0.7;
-        }
-
-        .op-search-wrap {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 10px;
-        }
-        .op-search-wrap input {
-            flex: 1;
-            padding: 8px 14px;
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            background: rgba(0, 0, 0, 0.35);
-            color: #e8e6e3;
-            font-size: 0.9rem;
-            outline: none;
-            transition: border-color 0.25s;
-            font-family: inherit;
-        }
-        .op-search-wrap input::placeholder {
-            color: rgba(255, 255, 255, 0.25);
-        }
-        .op-search-wrap input:focus {
-            border-color: rgba(240, 196, 90, 0.4);
-        }
-        .op-search-wrap .clear-btn {
-            padding: 0 14px;
-            border-radius: 10px;
-            border: none;
-            background: rgba(255, 255, 255, 0.05);
-            color: rgba(255, 255, 255, 0.3);
-            cursor: pointer;
-            font-size: 1.1rem;
-            transition: all 0.2s;
-            flex-shrink: 0;
-        }
-        .op-search-wrap .clear-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: #e8e6e3;
-        }
-
-        .filter-tabs {
-            display: flex;
-            gap: 6px;
-            overflow-x: auto;
-            padding-bottom: 6px;
-            margin-bottom: 8px;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
-        }
-        .filter-tabs::-webkit-scrollbar {
-            display: none;
-        }
-        .filter-tab {
-            flex-shrink: 0;
-            padding: 4px 14px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            background: rgba(255, 255, 255, 0.03);
-            color: rgba(255, 255, 255, 0.45);
-            font-size: 0.75rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-family: inherit;
-            white-space: nowrap;
-        }
-        .filter-tab:hover {
-            color: #e8e6e3;
-            border-color: rgba(255, 255, 255, 0.12);
-        }
-        .filter-tab.active {
-            background: rgba(240, 196, 90, 0.12);
-            border-color: #f0c45a;
-            color: #f0c45a;
-        }
-        .filter-tab .dot {
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            margin-right: 4px;
-            vertical-align: middle;
-        }
-
-        .filter-row {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-            margin-bottom: 8px;
-        }
-        .filter-row .filter-tab {
-            padding: 2px 12px;
-            font-size: 0.7rem;
-        }
-
-        .op-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            max-height: 340px;
-            overflow-y: auto;
-            padding-right: 2px;
-        }
-        @media (max-width: 400px) {
-            .op-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        .op-card {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 10px 4px 8px;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 2px solid rgba(255, 255, 255, 0.04);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            user-select: none;
-            position: relative;
-            min-height: 96px;
-        }
-        .op-card:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(255, 255, 255, 0.08);
-        }
-        .op-card:active {
-            transform: scale(0.96);
-        }
-        .op-card.selected {
-            border-color: #f0c45a;
-            background: rgba(240, 196, 90, 0.08);
-            box-shadow: 0 0 20px rgba(240, 196, 90, 0.06);
-        }
-        .op-card.selected .op-avatar {
-            box-shadow: 0 0 0 3px rgba(240, 196, 90, 0.3);
-        }
-        .op-card .check-mark {
-            position: absolute;
-            top: 4px;
-            right: 6px;
-            font-size: 0.7rem;
-            color: #f0c45a;
-            opacity: 0;
-            transform: scale(0.6);
-            transition: all 0.2s;
-        }
-        .op-card.selected .check-mark {
-            opacity: 1;
-            transform: scale(1);
-        }
-        .op-card.disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-            pointer-events: none;
-            filter: grayscale(0.6);
-        }
-
-        .op-avatar {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #fff;
-            flex-shrink: 0;
-            transition: box-shadow 0.2s;
-            margin-bottom: 4px;
-            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
-            background-size: cover !important;
-            background-position: center !important;
-            background-repeat: no-repeat !important;
-            overflow: hidden;
-            position: relative;
-        }
-        .op-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 50%;
-            display: block;
-        }
-        .op-avatar .fallback-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-weight: 700;
-            font-size: 1.2rem;
-            color: #fff;
-            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
-        }
-
-        .op-name {
-            font-size: 0.7rem;
-            font-weight: 500;
-            color: #c8c6c3;
-            text-align: center;
-            line-height: 1.2;
-            max-width: 100%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            margin-top: 2px;
-        }
-        .op-meta {
-            font-size: 0.55rem;
-            color: rgba(255, 255, 255, 0.3);
-            text-align: center;
-            line-height: 1.3;
-            margin-top: 1px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 100%;
-        }
-        .op-meta .star {
-            color: #f0c45a;
-            letter-spacing: 1px;
-        }
-        .op-meta .class-tag {
-            background: rgba(255, 255, 255, 0.06);
-            padding: 0 6px;
-            border-radius: 8px;
-            margin-left: 4px;
-        }
-        .op-meta .elite-tag {
-            background: rgba(255, 215, 0, 0.15);
-            color: #ffd700;
-            padding: 0 6px;
-            border-radius: 8px;
-            margin-left: 4px;
-            font-size: 0.6rem;
-        }
-
-        .op-tag {
-            font-size: 0.5rem;
-            padding: 1px 8px;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.06);
-            color: rgba(255, 255, 255, 0.35);
-            margin-top: 2px;
-            letter-spacing: 0.3px;
-        }
-        .op-card.selected .op-tag {
-            color: rgba(240, 196, 90, 0.6);
-        }
-
-        .color-trade {
-            background: linear-gradient(135deg, #2d5f9e, #4a7fc7);
-        }
-        .color-赤金 {
-            background: linear-gradient(135deg, #c9922a, #f0c45a);
-        }
-        .color-经验 {
-            background: linear-gradient(135deg, #2d7d4a, #4caf7a);
-        }
-        .color-源石 {
-            background: linear-gradient(135deg, #6d2d8a, #9c4dca);
-        }
-        .color-通用 {
-            background: linear-gradient(135deg, #4a4a5a, #7a7a8a);
-        }
-        .color-默认 {
-            background: linear-gradient(135deg, #3a3a4a, #5a5a6a);
-        }
-
-        .op-stats {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px solid rgba(255, 255, 255, 0.04);
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-        .op-stats .count {
-            font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.5);
-        }
-        .op-stats .count strong {
-            color: #f0c45a;
-            font-weight: 600;
-        }
-        .op-stats .actions {
-            display: flex;
-            gap: 6px;
-        }
-        .op-stats .actions button {
-            padding: 4px 14px;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            background: rgba(255, 255, 255, 0.04);
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 0.7rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-family: inherit;
-        }
-        .op-stats .actions button:hover {
-            background: rgba(255, 255, 255, 0.08);
-            color: #e8e6e3;
-        }
-        .op-stats .actions button:active {
-            transform: scale(0.95);
-        }
-
-        .btn-generate {
-            width: 100%;
-            padding: 14px 0;
-            border: none;
-            border-radius: 12px;
-            background: linear-gradient(135deg, #e94560, #c23152);
-            color: #fff;
-            font-size: 1.05rem;
-            font-weight: 700;
-            font-family: inherit;
-            cursor: pointer;
-            transition: all 0.25s;
-            letter-spacing: 1px;
-            box-shadow: 0 4px 24px rgba(233, 69, 96, 0.25);
-        }
-        .btn-generate:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 8px 32px rgba(233, 69, 96, 0.35);
-        }
-        .btn-generate:active {
-            transform: scale(0.97);
-        }
-        .btn-generate:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            transform: none !important;
-            box-shadow: none;
-        }
-
-        #resultCard {
-            display: none;
-            animation: fadeUp 0.35s ease;
-        }
-        @keyframes fadeUp {
-            from {
-                opacity: 0;
-                transform: translateY(12px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* ========== 结果卡片样式 ========== */
-        #result {
-            padding: 8px 0;
-            max-height: 500px;
-            overflow-y: auto;
-        }
-
-        .result-strategy {
-            font-size: 0.9rem;
-            color: #f0c45a;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-            padding-bottom: 10px;
-            margin-bottom: 12px;
-        }
-
-        .result-station {
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 12px;
-            padding: 10px 12px;
-            margin-bottom: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.04);
-        }
-
-        .station-title {
-            font-weight: 600;
-            color: #f0c45a;
-            font-size: 0.85rem;
-            margin-bottom: 6px;
-            letter-spacing: 0.5px;
-        }
-
-        .shift-row {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 4px 8px;
-            padding: 4px 0;
-        }
-
-        .shift-label {
-            font-size: 0.7rem;
-            color: rgba(255, 255, 255, 0.4);
-            min-width: 40px;
-            flex-shrink: 0;
-        }
-
-        .result-operator {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            padding: 2px 8px 2px 2px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            transition: background 0.2s;
-        }
-        .result-operator:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .result-avatar {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            background: #2a2a3a;
-            font-size: 0.65rem;
-            font-weight: 700;
-            color: #fff;
-        }
-        .result-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-        .result-avatar .fallback {
-            font-size: 0.7rem;
-            font-weight: 700;
-            color: #fff;
-        }
-
-        .result-info {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 0.7rem;
-            color: #c8c6c3;
-            white-space: nowrap;
-        }
-        .result-info .rname {
-            max-width: 60px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        .result-info .rstar {
-            color: #f0c45a;
-            font-size: 0.6rem;
-        }
-        .result-info .rclass {
-            background: rgba(255, 255, 255, 0.06);
-            padding: 0 4px;
-            border-radius: 4px;
-            font-size: 0.55rem;
-            color: rgba(255, 255, 255, 0.5);
-        }
-        .result-info .relite {
-            background: rgba(255, 215, 0, 0.12);
-            color: #ffd700;
-            padding: 0 4px;
-            border-radius: 4px;
-            font-size: 0.5rem;
-        }
-
-        .result-placeholder {
-            color: rgba(255, 255, 255, 0.3);
-            font-size: 0.75rem;
-            font-style: italic;
-        }
-
-        .result-unused {
-            margin-top: 12px;
-            padding-top: 10px;
-            border-top: 1px solid rgba(255, 255, 255, 0.06);
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.4);
-        }
-        .result-unused span {
-            color: #c8c6c3;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 28px 0 16px;
-            color: rgba(255, 255, 255, 0.2);
-            font-size: 0.85rem;
-        }
-        .empty-state .icon {
-            font-size: 2rem;
-            display: block;
-            margin-bottom: 6px;
-            opacity: 0.4;
-        }
-
-        .toast {
-            position: fixed;
-            bottom: 24px;
-            left: 50%;
-            transform: translateX(-50%) translateY(80px);
-            background: rgba(22, 33, 62, 0.95);
-            backdrop-filter: blur(12px);
-            padding: 10px 24px;
-            border-radius: 12px;
-            border: 1px solid rgba(240, 196, 90, 0.15);
-            color: #e8e6e3;
-            font-size: 0.85rem;
-            opacity: 0;
-            transition: all 0.4s ease;
-            pointer-events: none;
-            z-index: 999;
-            max-width: 90%;
-            text-align: center;
-        }
-        .toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
-
-        /* ========== 响应式 ========== */
-        @media (max-width: 420px) {
-            .splash-text .main {
-                font-size: 1.6rem;
-            }
-            .splash-text .sub {
-                font-size: 0.75rem;
-            }
-            .tap-hint {
-                font-size: 0.65rem;
-            }
-            .op-avatar {
-                width: 48px;
-                height: 48px;
-                font-size: 1rem;
-            }
-            .op-avatar .fallback-text {
-                font-size: 1rem;
-            }
-            .op-card {
-                min-height: 84px;
-            }
-            .result-info .rname {
-                max-width: 40px;
-            }
-            .result-avatar {
-                width: 24px;
-                height: 24px;
-            }
-            .result-operator {
-                padding: 1px 6px 1px 1px;
-            }
-        }
+            position:fixed; top:0; left:0; width:100%; height:100%;
+            background:radial-gradient(ellipse at 50% 60%, #1a1a3e 0%, #0b0b1a 80%);
+            z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center;
+            cursor:pointer; transition:opacity 0.9s cubic-bezier(0.4,0,0.2,1), visibility 0.9s ease;
+            user-select:none; -webkit-tap-highlight-color:transparent;
+        }
+        #splashOverlay.hide { opacity:0; visibility:hidden; pointer-events:none; }
+        .splash-text { text-align:center; opacity:0; animation:textFadeIn 1.2s ease 0.6s forwards; }
+        .splash-text .main { font-size:2.2rem; font-weight:700; color:#f0c45a; text-shadow:0 0 40px rgba(240,196,90,0.2), 0 4px 20px rgba(0,0,0,0.6); letter-spacing:2px; line-height:1.3; }
+        .splash-text .sub { font-size:0.9rem; color:rgba(255,255,255,0.3); margin-top:8px; letter-spacing:4px; font-weight:300; }
+        .splash-text .highlight { color:#ff6b8a; text-shadow:0 0 30px rgba(255,107,138,0.3); }
+        @keyframes textFadeIn { 0% { opacity:0; transform:translateY(16px) scale(0.96); } 100% { opacity:1; transform:translateY(0) scale(1); } }
+        .tap-hint { margin-top:28px; font-size:0.75rem; color:rgba(255,255,255,0.15); letter-spacing:2px; animation:pulseHint 2s ease-in-out infinite; }
+        @keyframes pulseHint { 0%,100% { opacity:0.15; transform:scale(1); } 50% { opacity:0.5; transform:scale(1.05); } }
+        .header { text-align:center; padding:8px 0 18px; position:relative; }
+        .header::after { content:""; display:block; width:60px; height:3px; background:linear-gradient(90deg, transparent, #f0c45a, transparent); margin:10px auto 0; border-radius:4px; }
+        .header h1 { font-size:1.5rem; font-weight:700; color:#f0c45a; letter-spacing:2px; text-shadow:0 0 30px rgba(240,196,90,0.15); }
+        .header h1 small { font-size:0.7rem; font-weight:400; color:rgba(255,255,255,0.35); display:block; margin-top:2px; }
+        .card { background:rgba(22,33,62,0.75); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); border-radius:16px; padding:16px 14px; margin-bottom:14px; border:1px solid rgba(255,255,255,0.04); box-shadow:0 8px 32px rgba(0,0,0,0.4); }
+        .card-title { font-size:0.85rem; font-weight:600; color:#f0c45a; letter-spacing:1px; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+        .card-title .badge { background:rgba(240,196,90,0.15); color:#f0c45a; font-size:0.65rem; padding:0 10px; border-radius:20px; font-weight:400; }
+        .layout-group { display:flex; gap:10px; }
+        .layout-btn { flex:1; padding:10px 0; border:2px solid rgba(255,255,255,0.08); border-radius:10px; background:rgba(255,255,255,0.02); color:rgba(255,255,255,0.5); font-size:0.95rem; font-weight:600; cursor:pointer; transition:all 0.25s; text-align:center; font-family:inherit; }
+        .layout-btn:hover { border-color:rgba(240,196,90,0.3); color:#e8e6e3; }
+        .layout-btn.active { border-color:#f0c45a; background:rgba(240,196,90,0.08); color:#f0c45a; box-shadow:0 0 20px rgba(240,196,90,0.06); }
+        .layout-btn .sub { display:block; font-size:0.6rem; font-weight:400; opacity:0.5; margin-top:2px; }
+        .layout-btn.active .sub { opacity:0.7; }
+        .op-search-wrap { display:flex; gap:8px; margin-bottom:10px; }
+        .op-search-wrap input { flex:1; padding:8px 14px; border-radius:10px; border:1px solid rgba(255,255,255,0.08); background:rgba(0,0,0,0.35); color:#e8e6e3; font-size:0.9rem; outline:none; transition:border-color 0.25s; font-family:inherit; }
+        .op-search-wrap input::placeholder { color:rgba(255,255,255,0.25); }
+        .op-search-wrap input:focus { border-color:rgba(240,196,90,0.4); }
+        .op-search-wrap .clear-btn { padding:0 14px; border-radius:10px; border:none; background:rgba(255,255,255,0.05); color:rgba(255,255,255,0.3); cursor:pointer; font-size:1.1rem; transition:all 0.2s; flex-shrink:0; }
+        .op-search-wrap .clear-btn:hover { background:rgba(255,255,255,0.1); color:#e8e6e3; }
+        .filter-tabs { display:flex; gap:6px; overflow-x:auto; padding-bottom:6px; margin-bottom:8px; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+        .filter-tabs::-webkit-scrollbar { display:none; }
+        .filter-tab { flex-shrink:0; padding:4px 14px; border-radius:20px; border:1px solid rgba(255,255,255,0.06); background:rgba(255,255,255,0.03); color:rgba(255,255,255,0.45); font-size:0.75rem; font-weight:500; cursor:pointer; transition:all 0.2s; font-family:inherit; white-space:nowrap; }
+        .filter-tab:hover { color:#e8e6e3; border-color:rgba(255,255,255,0.12); }
+        .filter-tab.active { background:rgba(240,196,90,0.12); border-color:#f0c45a; color:#f0c45a; }
+        .filter-tab .dot { display:inline-block; width:6px; height:6px; border-radius:50%; margin-right:4px; vertical-align:middle; }
+        .filter-row { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px; }
+        .filter-row .filter-tab { padding:2px 12px; font-size:0.7rem; }
+        .op-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; max-height:340px; overflow-y:auto; padding-right:2px; }
+        @media (max-width:400px) { .op-grid { grid-template-columns:repeat(2,1fr); } }
+        .op-card { display:flex; flex-direction:column; align-items:center; padding:10px 4px 8px; border-radius:12px; background:rgba(255,255,255,0.02); border:2px solid rgba(255,255,255,0.04); cursor:pointer; transition:all 0.2s ease; user-select:none; position:relative; min-height:96px; }
+        .op-card:hover { background:rgba(255,255,255,0.05); border-color:rgba(255,255,255,0.08); }
+        .op-card:active { transform:scale(0.96); }
+        .op-card.selected { border-color:#f0c45a; background:rgba(240,196,90,0.08); box-shadow:0 0 20px rgba(240,196,90,0.06); }
+        .op-card.selected .op-avatar { box-shadow:0 0 0 3px rgba(240,196,90,0.3); }
+        .op-card .check-mark { position:absolute; top:4px; right:6px; font-size:0.7rem; color:#f0c45a; opacity:0; transform:scale(0.6); transition:all 0.2s; }
+        .op-card.selected .check-mark { opacity:1; transform:scale(1); }
+        .op-card.disabled { opacity:0.3; cursor:not-allowed; pointer-events:none; filter:grayscale(0.6); }
+        .op-avatar { width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.1rem; font-weight:700; color:#fff; flex-shrink:0; transition:box-shadow 0.2s; margin-bottom:4px; text-shadow:0 1px 4px rgba(0,0,0,0.3); background-size:cover !important; background-position:center !important; background-repeat:no-repeat !important; overflow:hidden; position:relative; }
+        .op-avatar img { width:100%; height:100%; object-fit:cover; border-radius:50%; display:block; }
+        .op-avatar .fallback-text { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-weight:700; font-size:1.2rem; color:#fff; text-shadow:0 1px 4px rgba(0,0,0,0.5); }
+        .op-name { font-size:0.7rem; font-weight:500; color:#c8c6c3; text-align:center; line-height:1.2; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin-top:2px; }
+        .op-meta { font-size:0.55rem; color:rgba(255,255,255,0.3); text-align:center; line-height:1.3; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
+        .op-meta .star { color:#f0c45a; letter-spacing:1px; }
+        .op-meta .class-tag { background:rgba(255,255,255,0.06); padding:0 6px; border-radius:8px; margin-left:4px; }
+        .op-meta .elite-tag { background:rgba(255,215,0,0.15); color:#ffd700; padding:0 6px; border-radius:8px; margin-left:4px; font-size:0.6rem; }
+        .op-tag { font-size:0.5rem; padding:1px 8px; border-radius:10px; background:rgba(255,255,255,0.06); color:rgba(255,255,255,0.35); margin-top:2px; letter-spacing:0.3px; }
+        .op-card.selected .op-tag { color:rgba(240,196,90,0.6); }
+        .color-trade { background:linear-gradient(135deg, #2d5f9e, #4a7fc7); }
+        .color-赤金 { background:linear-gradient(135deg, #c9922a, #f0c45a); }
+        .color-经验 { background:linear-gradient(135deg, #2d7d4a, #4caf7a); }
+        .color-源石 { background:linear-gradient(135deg, #6d2d8a, #9c4dca); }
+        .color-通用 { background:linear-gradient(135deg, #4a4a5a, #7a7a8a); }
+        .color-中枢 { background:linear-gradient(135deg, #6d28d9, #a78bfa); }
+        .color-默认 { background:linear-gradient(135deg, #3a3a4a, #5a5a6a); }
+        .op-stats { display:flex; justify-content:space-between; align-items:center; margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.04); flex-wrap:wrap; gap:6px; }
+        .op-stats .count { font-size:0.8rem; color:rgba(255,255,255,0.5); }
+        .op-stats .count strong { color:#f0c45a; font-weight:600; }
+        .op-stats .actions { display:flex; gap:6px; }
+        .op-stats .actions button { padding:4px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.06); background:rgba(255,255,255,0.04); color:rgba(255,255,255,0.5); font-size:0.7rem; font-weight:500; cursor:pointer; transition:all 0.2s; font-family:inherit; }
+        .op-stats .actions button:hover { background:rgba(255,255,255,0.08); color:#e8e6e3; }
+        .op-stats .actions button:active { transform:scale(0.95); }
+        .btn-generate { width:100%; padding:14px 0; border:none; border-radius:12px; background:linear-gradient(135deg, #e94560, #c23152); color:#fff; font-size:1.05rem; font-weight:700; font-family:inherit; cursor:pointer; transition:all 0.25s; letter-spacing:1px; box-shadow:0 4px 24px rgba(233,69,96,0.25); }
+        .btn-generate:hover { transform:translateY(-1px); box-shadow:0 8px 32px rgba(233,69,96,0.35); }
+        .btn-generate:active { transform:scale(0.97); }
+        .btn-generate:disabled { opacity:0.4; cursor:not-allowed; transform:none !important; box-shadow:none; }
+        #resultCard { display:none; animation:fadeUp 0.35s ease; }
+        @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+        #result { padding:8px 0; max-height:500px; overflow-y:auto; }
+        .result-strategy { font-size:0.9rem; color:#f0c45a; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:10px; margin-bottom:12px; }
+        .result-station { background:rgba(255,255,255,0.03); border-radius:12px; padding:10px 12px; margin-bottom:12px; border:1px solid rgba(255,255,255,0.04); }
+        .station-title { font-weight:600; color:#f0c45a; font-size:0.85rem; margin-bottom:6px; letter-spacing:0.5px; }
+        .station-title .station-tag { font-size:0.6rem; font-weight:400; color:rgba(255,255,255,0.5); margin-left:8px; background:rgba(255,255,255,0.06); padding:0 8px; border-radius:10px; }
+        .station-title .station-tag.cooperation { color:#4caf7a; background:rgba(76,175,122,0.15); }
+        .station-title .station-tag.longmen { color:#4a7fc7; background:rgba(74,127,199,0.15); }
+        .shift-row { display:flex; flex-wrap:wrap; align-items:center; gap:4px 8px; padding:4px 0; }
+        .shift-label { font-size:0.7rem; color:rgba(255,255,255,0.4); min-width:40px; flex-shrink:0; }
+        .result-operator { display:inline-flex; align-items:center; gap:4px; background:rgba(255,255,255,0.05); border-radius:20px; padding:2px 8px 2px 2px; border:1px solid rgba(255,255,255,0.06); transition:background 0.2s; }
+        .result-operator:hover { background:rgba(255,255,255,0.1); }
+        .result-avatar { width:28px; height:28px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; overflow:hidden; background:#2a2a3a; font-size:0.65rem; font-weight:700; color:#fff; }
+        .result-avatar img { width:100%; height:100%; object-fit:cover; display:block; }
+        .result-avatar .fallback { font-size:0.7rem; font-weight:700; color:#fff; }
+        .result-info { display:flex; align-items:center; gap:4px; font-size:0.7rem; color:#c8c6c3; white-space:nowrap; }
+        .result-info .rname { max-width:60px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .result-info .rstar { color:#f0c45a; font-size:0.6rem; }
+        .result-info .rclass { background:rgba(255,255,255,0.06); padding:0 4px; border-radius:4px; font-size:0.55rem; color:rgba(255,255,255,0.5); }
+        .result-info .relite { background:rgba(255,215,0,0.12); color:#ffd700; padding:0 4px; border-radius:4px; font-size:0.5rem; }
+        .result-placeholder { color:rgba(255,255,255,0.3); font-size:0.75rem; font-style:italic; }
+        .result-unused { margin-top:12px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.06); font-size:0.75rem; color:rgba(255,255,255,0.4); }
+        .result-unused span { color:#c8c6c3; }
+        .empty-state { text-align:center; padding:28px 0 16px; color:rgba(255,255,255,0.2); font-size:0.85rem; }
+        .empty-state .icon { font-size:2rem; display:block; margin-bottom:6px; opacity:0.4; }
+        .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px); background:rgba(22,33,62,0.95); backdrop-filter:blur(12px); padding:10px 24px; border-radius:12px; border:1px solid rgba(240,196,90,0.15); color:#e8e6e3; font-size:0.85rem; opacity:0; transition:all 0.4s ease; pointer-events:none; z-index:999; max-width:90%; text-align:center; }
+        .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+        @media (max-width:420px) { .splash-text .main { font-size:1.6rem; } .splash-text .sub { font-size:0.75rem; } .tap-hint { font-size:0.65rem; } .op-avatar { width:48px; height:48px; font-size:1rem; } .op-avatar .fallback-text { font-size:1rem; } .op-card { min-height:84px; } .result-info .rname { max-width:40px; } .result-avatar { width:24px; height:24px; } .result-operator { padding:1px 6px 1px 1px; } }
     </style>
 </head>
 <body>
-
-    <!-- ========== 开场动画遮罩 ========== -->
     <div id="splashOverlay">
         <div class="splash-text">
             <div class="main">🐾 抖音关注 <span class="highlight">黑猫</span> 谢谢喵！</div>
@@ -794,7 +139,6 @@
         <div class="tap-hint">✦ 点击任意处进入 ✦</div>
     </div>
 
-    <!-- ========== 主应用 ========== -->
     <div class="app-wrap">
         <header class="header">
             <h1>🔧 基建排版器 <small>ARKNIGHTS · 两班倒</small></h1>
@@ -819,6 +163,7 @@
             </div>
             <div class="filter-tabs" id="filterTabs">
                 <button class="filter-tab active" data-filter="all">全部</button>
+                <button class="filter-tab" data-filter="中枢"><span class="dot" style="background:#a78bfa;"></span>中枢</button>
                 <button class="filter-tab" data-filter="贸易站"><span class="dot" style="background:#4a7fc7;"></span>贸易</button>
                 <button class="filter-tab" data-filter="赤金"><span class="dot" style="background:#f0c45a;"></span>赤金</button>
                 <button class="filter-tab" data-filter="经验"><span class="dot" style="background:#4caf7a;"></span>经验</button>
@@ -869,42 +214,38 @@
 
     <script>
         // =====================================================================
-        //  开场动画逻辑
+        //  开场动画
         // =====================================================================
         (function splash() {
             const overlay = document.getElementById('splashOverlay');
-
             function dismiss() {
                 overlay.classList.add('hide');
                 overlay.removeEventListener('click', dismiss);
                 overlay.removeEventListener('touchstart', dismiss);
                 document.removeEventListener('keydown', keyHandler);
             }
-
             function keyHandler(e) {
                 if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
                     dismiss();
                 }
             }
-
             overlay.addEventListener('click', dismiss);
             overlay.addEventListener('touchstart', dismiss, { passive: true });
             document.addEventListener('keydown', keyHandler);
-
             setTimeout(dismiss, 4200);
         })();
 
         // =====================================================================
-        //  干员数据（名称、职业已修正）
+        //  干员数据（完整版）
         // =====================================================================
-
         const FIXED_ONLY_OPS = new Set([
-            "火神", "泡泡", "多萝西", "娜斯提", "温蒂", "冬时", "森蚺", "槐琥", "涤火杰西卡", "贝娜",
+            "火神", "泡泡", "多萝西", "娜斯提", "温蒂", "冬时", "森蚺", "槐琥", "贝娜",
             "Miss.Christine", "圣约送葬人", "卡达", "豆苗", "蛇屠箱", "黑角", "引星棘刺", "褐果",
-            "但书", "可露希尔", "蕾缪安", "巫恋", "龙舌兰", "柏喙", "卡夫卡", "明椒", "折光", "琳琅诗怀雅",
+            "蕾缪安", "龙舌兰", "柏喙", "卡夫卡", "明椒", "折光", "琳琅诗怀雅",
             "伺夜", "空弦", "深巡", "吉星", "石英", "维娜·维多利亚", "空爆", "月见夜", "古米", "齐尔查克",
-            "慕斯", "夜刀", "玫兰莎", "梓兰", "远山", "焰狐龙梓兰", "雷狼龙S空爆", "推进之王", "摩根", "贝洛内"
+            "慕斯", "夜刀", "玫兰莎", "梓兰", "远山", "焰狐龙梓兰", "雷狼龙S空爆", "推进之王", "摩根", "贝洛内",
+            "丰川祥子", "三角初华", "若叶睦", "祐天寺若麦"
         ]);
 
         const SINGLE_HANG_FORBIDDEN = new Set([
@@ -913,61 +254,63 @@
             "红云", "火神"
         ]);
 
+        // ★★★ 干员选择阶段不再禁用任何干员 ★★★
+        const FORBIDDEN_IN_333 = new Set([]);
+
+        const CENTER_NO_SINGLE = new Set([
+            "丰川祥子", "三角初华", "若叶睦", "祐天寺若麦",
+            "星熊", "陈"
+        ]);
+
         const OPERATORS = {
-            // 制造站 - 赤金
-            "清流": { facility: "制造站", product: "赤金", type: "自动化", base: 0.35, combo: { "自动化": 2 },
-            combo_bonus: 0.25, star: 4, class: "医疗" },
-            "温蒂": { facility: "制造站", product: "通用", type: "自动化", base: 0.20, combo: { "自动化": 2 },
-            combo_bonus: 0.10, star: 6, class: "特种" },
-            "森蚺": { facility: "制造站", product: "通用", type: "自动化", base: 0.20, combo: { "自动化": 2 },
-            combo_bonus: 0.10, star: 6, class: "重装" },
+            // ==================== 制造站 - 赤金（17人） ====================
+            "清流": { facility: "制造站", product: "赤金", type: "自动化", base: 0.35, combo: { "自动化": 2 }, combo_bonus: 0.25, star: 4, class: "医疗" },
+            "温蒂": { facility: "制造站", product: "通用", type: "自动化", base: 0.20, combo: { "自动化": 2 }, combo_bonus: 0.10, star: 6, class: "特种" },
+            "森蚺": { facility: "制造站", product: "通用", type: "自动化", base: 0.20, combo: { "自动化": 2 }, combo_bonus: 0.10, star: 6, class: "重装" },
             "冬时": { facility: "制造站", product: "赤金", type: "自动化", base: 0.20, star: 4, class: "先锋" },
-            "异客": { facility: "制造站", product: "通用", type: "自动化", base: 0.20, combo: { "自动化": 2 },
-            combo_bonus: 0.05, star: 6, class: "术师" },
+            "异客": { facility: "制造站", product: "通用", type: "自动化", base: 0.20, combo: { "自动化": 2 }, combo_bonus: 0.05, star: 6, class: "术师" },
             "砾": { facility: "制造站", product: "赤金", type: "常规", base: 0.35, star: 4, class: "特种" },
             "斑点": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 3, class: "重装" },
             "苍苔": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 5, class: "近卫" },
             "夜烟": { facility: "制造站", product: "赤金", type: "常规", base: 0.25, star: 4, class: "术师" },
             "槐琥": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 5, class: "特种" },
-            "淬羽赫默": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 5, class: "辅助" }, // 改为辅助
+            "淬羽赫默": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 5, class: "辅助" },
             "阿罗玛": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 5, class: "术师" },
             "杏仁": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 5, class: "特种" },
-            "涤火杰西卡": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 6, class: "重装" },
             "多萝西": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 6, class: "特种" },
-            "娜斯提": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 5, class: "辅助" }, // 改为辅助
+            "娜斯提": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 5, class: "辅助" },
             "引星棘刺": { facility: "制造站", product: "赤金", type: "常规", base: 0.30, star: 6, class: "特种" },
             "温米": { facility: "制造站", product: "赤金", type: "常规", base: 0.25, star: 5, class: "术师" },
 
-            // 制造站 - 通用
+            // ==================== 制造站 - 通用（17人） ====================
             "香草": { facility: "制造站", product: "通用", type: "常规", base: 0.25, star: 3, class: "先锋" },
             "杰西卡": { facility: "制造站", product: "通用", type: "常规", base: 0.25, star: 4, class: "狙击" },
             "至简": { facility: "制造站", product: "通用", type: "常规", base: 0.30, star: 5, class: "术师" },
             "调香师": { facility: "制造站", product: "通用", type: "常规", base: 0.25, star: 4, class: "医疗" },
-            "罗比菈塔": { facility: "制造站", product: "通用", type: "常规", base: 0.30, star: 4, class: "辅助" }, // 原名萝比拉塔
+            "罗比菈塔": { facility: "制造站", product: "通用", type: "常规", base: 0.30, star: 4, class: "辅助" },
             "史都华德": { facility: "制造站", product: "通用", type: "常规", base: 0.25, star: 3, class: "术师" },
             "铅踝": { facility: "制造站", product: "通用", type: "常规", base: 0.25, star: 4, class: "狙击" },
             "水月": { facility: "制造站", product: "通用", type: "常规", base: 0.25, star: 6, class: "特种" },
             "梅尔": { facility: "制造站", product: "通用", type: "常规", base: 0.25, star: 5, class: "辅助" },
-            "玛露西尔": { facility: "制造站", product: "通用", type: "常规", base: 0.25, star: 5, class: "术师" }, // 原名玛露希尔
-            "维伊": { facility: "制造站", product: "通用", type: "常规", base: 0.25, star: 6, class: "术师" }, // 改为术师
+            "玛露西尔": { facility: "制造站", product: "通用", type: "常规", base: 0.25, star: 5, class: "术师" },
+            "维伊": { facility: "制造站", product: "通用", type: "常规", base: 0.25, star: 6, class: "术师" },
             "泡普卡": { facility: "制造站", product: "通用", type: "常规", base: 0.20, star: 3, class: "近卫" },
             "石棉": { facility: "制造站", product: "通用", type: "常规", base: 0.20, star: 5, class: "重装" },
             "裁度": { facility: "制造站", product: "通用", type: "常规", base: 0.25, star: 5, class: "特种" },
             "芬": { facility: "制造站", product: "通用", type: "常规", base: 0.20, star: 3, class: "先锋" },
-            "克洛丝": { facility: "制造站", product: "通用", type: "常规", base: 0.20, star: 3, class: "狙击" }, // 原名克洛斯
+            "克洛丝": { facility: "制造站", product: "通用", type: "常规", base: 0.20, star: 3, class: "狙击" },
             "雪猎": { facility: "制造站", product: "通用", type: "常规", base: 0.35, star: 5, class: "狙击" },
 
-            // 制造站 - 经验
+            // ==================== 制造站 - 经验（23人） ====================
             "食铁兽": { facility: "制造站", product: "经验", type: "常规", base: 0.35, star: 5, class: "特种" },
             "断罪者": { facility: "制造站", product: "经验", type: "常规", base: 0.35, star: 4, class: "近卫" },
             "Castle-3": { facility: "制造站", product: "经验", type: "常规", base: 0.30, star: 1, class: "近卫" },
             "刻俄柏": { facility: "制造站", product: "经验", type: "经验专精", base: 0.30, star: 6, class: "术师" },
-            "帕拉斯": { facility: "制造站", product: "经验", type: "经验专精", base: 0.30, star: 6, class: "近卫" },
+            "帕拉斯": { facility: "制造站", product: "经验", type: "经验专精", base: 0.25, star: 6, class: "近卫" },
             "稀音": { facility: "制造站", product: "经验", type: "经验专精", base: 0.30, star: 5, class: "辅助" },
             "红云": { facility: "制造站", product: "经验", type: "经验专精", base: 0.25, star: 4, class: "狙击" },
             "酒神": { facility: "制造站", product: "经验", type: "经验专精", base: 0.32, star: 6, class: "辅助" },
-            "Miss.Christine": { facility: "制造站", product: "经验", type: "经验专精", base: 0.30, star: 5,
-            class: "术师" },
+            "Miss.Christine": { facility: "制造站", product: "经验", type: "经验专精", base: 0.30, star: 5, class: "术师" },
             "卡达": { facility: "制造站", product: "经验", type: "经验专精", base: 0.25, star: 4, class: "术师" },
             "豆苗": { facility: "制造站", product: "经验", type: "经验专精", base: 0.20, star: 4, class: "先锋" },
             "黑角": { facility: "制造站", product: "经验", type: "经验专精", base: 0.15, star: 2, class: "重装" },
@@ -984,7 +327,7 @@
             "泡泡": { facility: "制造站", product: "通用", type: "经验专精", base: 0.30, star: 4, class: "重装" },
             "贝娜": { facility: "制造站", product: "通用", type: "经验专精", base: 0.25, star: 5, class: "特种" },
 
-            // 制造站 - 源石材料
+            // ==================== 制造站 - 源石材料（8人） ====================
             "褐果": { facility: "制造站", product: "源石材料", type: "常规", base: 0.35, star: 4, class: "医疗" },
             "地灵": { facility: "制造站", product: "源石材料", type: "源石加工", base: 0.30, star: 4, class: "辅助" },
             "炎熔": { facility: "制造站", product: "源石材料", type: "常规", base: 0.25, star: 3, class: "术师" },
@@ -992,25 +335,18 @@
             "月见夜": { facility: "制造站", product: "源石材料", type: "常规", base: 0.20, star: 3, class: "近卫" },
             "谬因": { facility: "制造站", product: "源石材料", type: "常规", base: 0.30, star: 6, class: "术师" },
             "艾雅法拉": { facility: "制造站", product: "源石材料", type: "源石加工", base: 0.25, star: 6, class: "术师" },
-            "锡兰": { facility: "制造站", product: "源石材料", type: "源石加工", base: 0.30, combo: { "源石加工": 2 },
-            combo_bonus: 0.10, star: 5, class: "医疗" },
+            "锡兰": { facility: "制造站", product: "源石材料", type: "源石加工", base: 0.30, combo: { "源石加工": 2 }, combo_bonus: 0.10, star: 5, class: "医疗" },
 
-            // 贸易站
-            "银灰": { facility: "贸易站", product: "通用", type: "交际", base: 0.20, combo: { "交际": 2 },
-            combo_bonus: 0.15, star: 6, class: "近卫" },
-            "崖心": { facility: "贸易站", product: "通用", type: "交际", base: 0.20, combo: { "交际": 2 },
-            combo_bonus: 0.15, star: 5, class: "特种" },
-            "孑": { facility: "贸易站", product: "通用", type: "裁缝", base: 0.25, combo: { "裁缝": 1 },
-            combo_bonus: 0.10, star: 4, class: "特种" },
-            "能天使": { facility: "贸易站", product: "通用", type: "企鹅物流", base: 0.20, combo: { "企鹅物流": 2 },
-            combo_bonus: 0.15, star: 6, class: "狙击" },
-            "德克萨斯": { facility: "贸易站", product: "通用", type: "企鹅物流", base: 0.20, combo: { "企鹅物流": 2 },
-            combo_bonus: 0.15, star: 5, class: "先锋" },
-            "拉普兰德": { facility: "贸易站", product: "通用", type: "企鹅物流", base: 0.20, combo: { "企鹅物流": 2 },
-            combo_bonus: 0.15, star: 5, class: "近卫" },
+            // ==================== 贸易站（39人） ====================
+            "银灰": { facility: "贸易站", product: "通用", type: "交际", base: 0.20, combo: { "交际": 2 }, combo_bonus: 0.15, star: 6, class: "近卫" },
+            "崖心": { facility: "贸易站", product: "通用", type: "交际", base: 0.20, combo: { "交际": 2 }, combo_bonus: 0.15, star: 5, class: "特种" },
+            "孑": { facility: "贸易站", product: "通用", type: "裁缝", base: 0.25, combo: { "裁缝": 1 }, combo_bonus: 0.10, star: 4, class: "特种" },
+            "能天使": { facility: "贸易站", product: "通用", type: "企鹅物流", base: 0.20, combo: { "企鹅物流": 2 }, combo_bonus: 0.15, star: 6, class: "狙击" },
+            "德克萨斯": { facility: "贸易站", product: "通用", type: "企鹅物流", base: 0.20, combo: { "企鹅物流": 2 }, combo_bonus: 0.15, star: 5, class: "先锋" },
+            "拉普兰德": { facility: "贸易站", product: "通用", type: "企鹅物流", base: 0.20, combo: { "企鹅物流": 2 }, combo_bonus: 0.15, star: 5, class: "近卫" },
             "但书": { facility: "贸易站", product: "通用", type: "谈判", base: 0.30, star: 5, class: "辅助" },
             "可露希尔": { facility: "贸易站", product: "通用", type: "谈判", base: 0.30, star: 6, class: "先锋" },
-            "蕾缪安": { facility: "贸易站", product: "通用", type: "特殊", base: 0.30, star: 5, class: "狙击" }, // 原名雷缪安
+            "蕾缪安": { facility: "贸易站", product: "通用", type: "特殊", base: 0.30, star: 5, class: "狙击" },
             "巫恋": { facility: "贸易站", product: "通用", type: "裁缝", base: 0.25, star: 5, class: "辅助" },
             "龙舌兰": { facility: "贸易站", product: "通用", type: "裁缝", base: 0.30, star: 5, class: "近卫" },
             "柏喙": { facility: "贸易站", product: "通用", type: "裁缝", base: 0.20, star: 5, class: "近卫" },
@@ -1026,10 +362,10 @@
             "维娜·维多利亚": { facility: "贸易站", product: "通用", type: "常规", base: 0.20, star: 6, class: "近卫" },
             "空爆": { facility: "贸易站", product: "通用", type: "常规", base: 0.20, star: 3, class: "狙击" },
             "古米": { facility: "贸易站", product: "通用", type: "常规", base: 0.20, star: 4, class: "重装" },
-            "齐尔查克": { facility: "贸易站", product: "通用", type: "常规", base: 0.20, star: 4, class: "先锋" }, // 改为先锋
+            "齐尔查克": { facility: "贸易站", product: "通用", type: "常规", base: 0.20, star: 4, class: "先锋" },
             "慕斯": { facility: "贸易站", product: "通用", type: "常规", base: 0.15, star: 4, class: "近卫" },
             "夜刀": { facility: "贸易站", product: "通用", type: "常规", base: 0.15, star: 2, class: "先锋" },
-            "玫兰莎": { facility: "贸易站", product: "通用", type: "常规", base: 0.15, star: 3, class: "近卫" }, // 原名枚兰莎
+            "玫兰莎": { facility: "贸易站", product: "通用", type: "常规", base: 0.15, star: 3, class: "近卫" },
             "梓兰": { facility: "贸易站", product: "通用", type: "常规", base: 0.15, star: 3, class: "辅助" },
             "远山": { facility: "贸易站", product: "通用", type: "常规", base: 0.15, star: 4, class: "术师" },
             "焰狐龙梓兰": { facility: "贸易站", product: "通用", type: "特殊", base: 0.25, star: 6, class: "狙击" },
@@ -1043,264 +379,317 @@
         };
 
         // =====================================================================
-        //  统一设置精英化标签
+        //  补充中枢干员
         // =====================================================================
+        const CENTER_OPS_EXTRA = {
+            '阿米娅': { facility: '控制中枢', product: '中枢', type: '常规', base: 0, star: 5, class: '术师' },
+            '诗怀雅': { facility: '控制中枢', product: '中枢', type: '常规', base: 0, star: 5, class: '近卫' },
+            '阿斯卡纶': { facility: '控制中枢', product: '中枢', type: '常规', base: 0, star: 6, class: '特种' },
+            '凯尔希': { facility: '控制中枢', product: '中枢', type: '常规', base: 0, star: 6, class: '医疗' },
+            'Mon3tr': { facility: '控制中枢', product: '中枢', type: '常规', base: 0, star: 6, class: '医疗' },
+            '斩业星熊': { facility: '控制中枢', product: '中枢', type: '常规', base: 0, star: 6, class: '重装' },
+            '八幡海铃': { facility: '控制中枢', product: '中枢', type: '常规', base: 0, star: 5, class: '特种' },
+            '玛恩纳': { facility: '控制中枢', product: '中枢', type: '常规', base: 0, star: 6, class: '近卫' },
+            '维什戴尔': { facility: '控制中枢', product: '中枢', type: '常规', base: 0, star: 6, class: '狙击' },
+            '魔王': { facility: '控制中枢', product: '中枢', type: '常规', base: 0, star: 6, class: '辅助' },
+            '薇薇安娜': { facility: '控制中枢', product: '中枢', type: '常规', base: 0, star: 6, class: '近卫' },
+            '电弧': { facility: '控制中枢', product: '中枢', type: '常规', base: 0, star: 6, class: '辅助' },
+            '冰酿': { facility: '控制中枢', product: '中枢', type: '常规', base: 0, star: 5, class: '狙击' },
+            '清道夫': { facility: '控制中枢', product: '中枢', type: '常规', base: 0, star: 4, class: '先锋' },
+            '暴雨': { facility: '控制中枢', product: '中枢', type: '常规', base: 0, star: 5, class: '重装' },
+            '临光': { facility: '控制中枢', product: '中枢', type: '常规', base: 0, star: 5, class: '重装' },
+            '灰喉': { facility: '控制中枢', product: '中枢', type: '常规', base: 0, star: 5, class: '狙击' },
+            '红': { facility: '控制中枢', product: '中枢', type: '常规', base: 0, star: 5, class: '特种' },
+            '丰川祥子': { facility: '控制中枢', product: '中枢', type: '固定搭配', base: 0, star: 6, class: '近卫' },
+            '三角初华': { facility: '控制中枢', product: '中枢', type: '固定搭配', base: 0, star: 5, class: '辅助' },
+            '若叶睦': { facility: '控制中枢', product: '中枢', type: '固定搭配', base: 0, star: 5, class: '特种' },
+            '祐天寺若麦': { facility: '控制中枢', product: '中枢', type: '固定搭配', base: 0, star: 5, class: '近卫' },
+            '星熊': { facility: '控制中枢', product: '中枢', type: '特殊', base: 0, star: 6, class: '重装' },
+            '陈': { facility: '控制中枢', product: '中枢', type: '特殊', base: 0, star: 6, class: '近卫' },
+            '涤火杰西卡': { facility: '控制中枢', product: '中枢', type: '常规', base: 0, star: 6, class: '重装' },
+        };
+        for (let [name, info] of Object.entries(CENTER_OPS_EXTRA)) {
+            if (!OPERATORS[name]) OPERATORS[name] = info;
+        }
+
+        // =====================================================================
+        //  精英化标签
+        // =====================================================================
+        for (let name in OPERATORS) delete OPERATORS[name].elite;
         for (let name in OPERATORS) {
-            delete OPERATORS[name].elite;
+            const op = OPERATORS[name];
+            if (op.star === 4 && name !== '蛇屠箱' && name !== '清道夫') op.elite = '精英一';
         }
         for (let name in OPERATORS) {
             const op = OPERATORS[name];
-            if (op.star === 4 && name !== '蛇屠箱') {
-                op.elite = '精英一';
-            }
-        }
-        for (let name in OPERATORS) {
-            const op = OPERATORS[name];
-            if ((op.star === 5 || op.star === 6) && !['推进之王', '贝娜', '薄绿'].includes(name)) {
+            if ((op.star === 5 || op.star === 6) && !['推进之王', '贝娜', '薄绿', '丰川祥子', '三角初华', '若叶睦', '祐天寺若麦'].includes(name)) {
                 op.elite = '精英二';
             }
         }
         if (OPERATORS['薄绿']) OPERATORS['薄绿'].elite = '精英一';
+        if (OPERATORS['丰川祥子']) OPERATORS['丰川祥子'].elite = '精英二';
+        if (OPERATORS['三角初华']) OPERATORS['三角初华'].elite = '精英二';
+        if (OPERATORS['若叶睦']) OPERATORS['若叶睦'].elite = '精英二';
+        if (OPERATORS['祐天寺若麦']) OPERATORS['祐天寺若麦'].elite = '精英二';
+        if (OPERATORS['星熊']) OPERATORS['星熊'].elite = '精英二';
+        if (OPERATORS['陈']) OPERATORS['陈'].elite = '精英二';
+        if (OPERATORS['涤火杰西卡']) OPERATORS['涤火杰西卡'].elite = '精英二';
         const eliteThreeStars = ['斑点', '史都华德', '芬', '炎熔', '月见夜'];
-        for (let name of eliteThreeStars) {
-            if (OPERATORS[name]) OPERATORS[name].elite = '精英一';
-        }
+        for (let name of eliteThreeStars) { if (OPERATORS[name]) OPERATORS[name].elite = '精英一'; }
         const removeElite = ['红豆', '杰西卡', '夜烟', '孑'];
-        for (let name of removeElite) {
-            if (OPERATORS[name]) delete OPERATORS[name].elite;
-        }
+        for (let name of removeElite) { if (OPERATORS[name]) delete OPERATORS[name].elite; }
 
         // =====================================================================
-        //  组合数据（更新名称）
+        //  组合数据
         // =====================================================================
 
+        // 赤金组合（6组）
         const AK_COMBOS = [
-            { required: [
-                    ["清流"],
-                    ["温蒂"],
-                    ["冬时", "森蚺"]
-                ], bonus: 0.25 },
-            { required: [
-                    ["苍苔"],
-                    ["引星棘刺"],
-                    ["夜烟", "斑点"]
-                ], bonus: 0.25 },
-            { required: [
-                    ["苍苔"],
-                    ["斑点"],
-                    ["夜烟"]
-                ], bonus: 0.20 },
-            { required: [
-                    ["阿罗玛"],
-                    ["槐琥"],
-                    ["砾"]
-                ], bonus: 0.20 },
-            { required: [
-                    ["多萝西"],
-                    ["娜斯提"],
-                    ["淬羽赫默"]
-                ], bonus: 0.25 },
-            { required: [
-                    ["涤火杰西卡"],
-                    ["杏仁"],
-                    ["香草", "杰西卡"]
-                ], bonus: 0.20 },
-            { required: [
-                    ["火神"],
-                    ["泡泡"],
-                    ["贝娜"]
-                ], bonus: 0.25 }
+            { required: [["清流"], ["温蒂"], ["冬时", "森蚺"]], bonus: 0.25 },
+            { required: [["苍苔"], ["引星棘刺"], ["夜烟", "斑点"]], bonus: 0.25 },
+            { required: [["苍苔"], ["斑点"], ["夜烟"]], bonus: 0.20 },
+            { required: [["阿罗玛"], ["槐琥"], ["砾"]], bonus: 0.20 },
+            { required: [["多萝西"], ["娜斯提"], ["淬羽赫默"]], bonus: 0.25 },
+            { required: [["火神"], ["泡泡"], ["贝娜"]], bonus: 0.25 }
         ];
 
-        const ORI_COMBOS = [{ required: [
-                ["火神"],
-                ["泡泡"],
-                ["褐果"]
-            ], bonus: 0.25 }];
+        const ORI_COMBOS = [{ required: [["火神"], ["泡泡"], ["褐果"]], bonus: 0.25 }];
 
         const EXPERIENCE_COMBOS = [
-            { required: [
-                    ["刻俄柏", "帕拉斯"],
-                    ["稀音"],
-                    ["红云"]
-                ], bonus: 0.25 },
-            { required: [
-                    ["酒神"],
-                    ["Miss.Christine"],
-                    ["红云"]
-                ], bonus: 0.20 },
-            { required: [
-                    ["火神"],
-                    ["泡泡"],
-                    ["圣约送葬人"]
-                ], bonus: 0.30 },
-            { required: [
-                    ["火神"],
-                    ["泡泡"],
-                    ["贝娜"]
-                ], bonus: 0.25 },
-            { required: [
-                    ["红云"],
-                    ["卡达"],
-                    ["豆苗", "黑角", "蛇屠箱"]
-                ], bonus: 0.15 }
+            { required: [["刻俄柏", "帕拉斯"], ["稀音"], ["红云"]], bonus: 0.25 },
+            { required: [["酒神"], ["Miss.Christine"], ["红云"]], bonus: 0.20 },
+            { required: [["火神"], ["泡泡"], ["圣约送葬人"]], bonus: 0.30 },
+            { required: [["火神"], ["泡泡"], ["贝娜"]], bonus: 0.25 },
+            { required: [["红云"], ["卡达"], ["豆苗", "黑角", "蛇屠箱"]], bonus: 0.15 }
         ];
 
+        // ===== 贸易站组合（15组） =====
         const TRADE_COMBOS = [
-            { required: [
-                    ["但书"],
-                    ["蕾缪安"], // 原雷缪安
-                    ["能天使"]
-                ], bonus: 0.30 },
-            { required: [
-                    ["但书"],
-                    ["孑"],
-                    ["银灰"]
-                ], bonus: 0.25 },
-            { required: [
-                    ["但书"],
-                    ["伺夜"],
-                    ["贝洛内"]
-                ], bonus: 0.20 },
-            { required: [
-                    ["但书"],
-                    ["推进之王"],
-                    ["摩根"]
-                ], bonus: 0.20 },
-            { required: [
-                    ["但书"],
-                    ["焰狐龙梓兰"],
-                    ["雷狼龙S空爆"]
-                ], bonus: 0.25 },
-            { required: [
-                    ["可露希尔"],
-                    ["蕾缪安"], // 原雷缪安
-                    ["能天使"]
-                ], bonus: 0.30 },
-            { required: [
-                    ["可露希尔"],
-                    ["孑"],
-                    ["银灰"]
-                ], bonus: 0.25 },
-            { required: [
-                    ["可露希尔"],
-                    ["伺夜"],
-                    ["贝洛内"]
-                ], bonus: 0.20 },
-            { required: [
-                    ["可露希尔"],
-                    ["推进之王"],
-                    ["摩根"]
-                ], bonus: 0.20 },
-            { required: [
-                    ["可露希尔"],
-                    ["焰狐龙梓兰"],
-                    ["雷狼龙S空爆"]
-                ], bonus: 0.25 },
-            { required: [
-                    ["巫恋"],
-                    ["龙舌兰"],
-                    ["柏喙", "卡夫卡", "明椒", "折光"]
-                ], bonus: 0.30 },
-            { required: [
-                    ["孑"],
-                    ["银灰"],
-                    ["琳琅诗怀雅"]
-                ], bonus: 0.25 },
-            { required: [
-                    ["但书"],
-                    ["拉普兰德"],
-                    ["德克萨斯"]
-                ], bonus: 0.25 },
-            { required: [
-                    ["可露希尔"],
-                    ["拉普兰德"],
-                    ["德克萨斯"]
-                ], bonus: 0.25 }
+            { required: [["但书"], ["蕾缪安"], ["能天使"]], bonus: 0.30 },
+            { required: [["但书"], ["孑"], ["银灰"]], bonus: 0.25 },
+            { required: [["但书"], ["伺夜"], ["贝洛内"]], bonus: 0.20 },
+            { required: [["但书"], ["推进之王"], ["摩根"]], bonus: 0.20 },
+            { required: [["但书"], ["焰狐龙梓兰"], ["雷狼龙S空爆"]], bonus: 0.25 },
+            { required: [["可露希尔"], ["蕾缪安"], ["能天使"]], bonus: 0.30 },
+            { required: [["可露希尔"], ["孑"], ["银灰"]], bonus: 0.25 },
+            { required: [["可露希尔"], ["伺夜"], ["贝洛内"]], bonus: 0.20 },
+            { required: [["可露希尔"], ["推进之王"], ["摩根"]], bonus: 0.20 },
+            { required: [["可露希尔"], ["焰狐龙梓兰"], ["雷狼龙S空爆"]], bonus: 0.25 },
+            { required: [["巫恋"], ["龙舌兰"], ["柏喙", "卡夫卡", "明椒", "折光"]], bonus: 0.30 },
+            { required: [["但书"], ["拉普兰德"], ["德克萨斯"]], bonus: 0.25 },
+            { required: [["可露希尔"], ["拉普兰德"], ["德克萨斯"]], bonus: 0.25 },
+            { required: [["孑"], ["银灰"], ["琳琅诗怀雅"]], bonus: 0.25 },
+            { required: [["维娜·维多利亚"], ["摩根"], ["推进之王"]], bonus: 0.25 }
         ];
 
-        const TRADE_PAIRS = [
-            ["伺夜", "贝洛内"],
-            ["蕾缪安", "能天使"], // 原雷缪安
-            ["焰狐龙梓兰", "雷狼龙S空爆"]
-        ];
+        const TRADE_PAIRS = [["伺夜", "贝洛内"], ["蕾缪安", "能天使"], ["焰狐龙梓兰", "雷狼龙S空爆"]];
         const TRADE_TIERS = [
             ["伺夜", "空弦", "深巡", "吉星", "石英"],
             ["能天使", "维娜·维多利亚", "空爆", "月见夜", "古米", "齐尔查克"],
-            ["慕斯", "夜刀", "芬", "玫兰莎", "梓兰", "远山"] // 枚兰莎→玫兰莎
+            ["慕斯", "夜刀", "芬", "玫兰莎", "梓兰", "远山"]
         ];
 
         // =====================================================================
-        //  核心算法
+        //  控制中枢分类常量
         // =====================================================================
+        const CENTER_TRADE_OPS = ['阿米娅', '诗怀雅', '阿斯卡纶'];
+        const CENTER_MANUFACTURE_OPS = ['Mon3tr', '凯尔希', '斩业星熊'];
+        const CENTER_LIAISON_OPS = ['焰狐龙梓兰', '八幡海铃'];
+        const CENTER_MOOD_CANDIDATES = [
+            { name: '玛恩纳', required: false, count: 1 },
+            { name: '维什戴尔', required: true, partner: '魔王', count: 2 },
+            { name: '薇薇安娜', required: false, count: 1 },
+            { name: '电弧', required: false, count: 1 },
+            { name: '冰酿', required: false, count: 1 },
+            { name: '清道夫', required: false, count: 1 },
+            { name: '暴雨', required: false, count: 1 },
+            { name: '临光', required: false, count: 1 },
+            { name: '灰喉', required: false, count: 1 },
+            { name: '红', required: false, count: 1 },
+        ];
+        const CENTER_FIXED_COMBO = ['丰川祥子', '三角初华', '若叶睦', '祐天寺若麦', '八幡海铃'];
+        const CENTER_AMYIA_COMBO = ['阿米娅', '魔王', '维什戴尔'];
 
-        function getBaseEff(name, product, facilityType) {
-            const op = OPERATORS[name];
-            if (!op) return 0;
-            if (name === '芬') {
-                if (facilityType === '贸易站') return 0.15;
-                if (facilityType === '制造站' && product === '通用') return 0.20;
-                return 0.20;
+        // =====================================================================
+        //  辅助函数
+        // =====================================================================
+        function getXingXiongPartner(availableSet, used) {
+            const xing = '斩业星熊';
+            if (!availableSet.has(xing) || used.has(xing)) return null;
+            const partners = ['诗怀雅', '星熊', '陈'];
+            for (let p of partners) {
+                if (availableSet.has(p) && !used.has(p)) return p;
             }
-            if (product && op.product !== "通用" && op.product !== product) return 0;
-            return op.base;
+            return null;
         }
 
-        function calcTeamEff(team, facilityType, product) {
-            let total = 0,
-                typeCount = {};
-            const validTeam = team.filter(n => n in OPERATORS);
-            for (let name of validTeam) {
-                const op = OPERATORS[name];
-                if (op.facility !== facilityType && name !== '芬') return -1;
-                if (name === '芬') {
-                    if (facilityType === '贸易站' && op.facility !== '贸易站' && op.facility !== '制造站') return -1;
-                    if (facilityType === '制造站' && product !== '通用') return -1;
+        function fillMood(availableSet, used, count, excludeNames = []) {
+            const added = [];
+            let remaining = count;
+            const filtered = new Set(availableSet);
+            for (let n of used) filtered.delete(n);
+            for (let n of CENTER_NO_SINGLE) filtered.delete(n);
+
+            for (let cand of CENTER_MOOD_CANDIDATES) {
+                if (remaining <= 0) break;
+                if (cand.name === '魔王') continue;
+                if (excludeNames.includes(cand.name)) continue;
+
+                if (cand.required && cand.partner) {
+                    if (excludeNames.includes(cand.partner)) continue;
+                    if (filtered.has(cand.name) && !used.has(cand.name) &&
+                        filtered.has(cand.partner) && !used.has(cand.partner) &&
+                        remaining >= 2) {
+                        added.push(cand.name);
+                        used.add(cand.name);
+                        added.push(cand.partner);
+                        used.add(cand.partner);
+                        remaining -= 2;
+                        if (cand.name === '维什戴尔') excludeNames.push('维什戴尔');
+                    }
                 } else {
-                    if (product && op.product !== "通用" && op.product !== product) return -1;
-                }
-                total += getBaseEff(name, product, facilityType);
-                typeCount[op.type] = (typeCount[op.type] || 0) + 1;
-            }
-            for (let name of validTeam) {
-                const op = OPERATORS[name];
-                if (op.combo) {
-                    for (let [ct, need] of Object.entries(op.combo)) {
-                        if ((typeCount[ct] || 0) >= need) total += op.combo_bonus || 0;
+                    if (cand.name === '玛恩纳' && used.has('维什戴尔')) continue;
+                    if (filtered.has(cand.name) && !used.has(cand.name) && remaining >= 1) {
+                        added.push(cand.name);
+                        used.add(cand.name);
+                        remaining--;
                     }
                 }
             }
-            if (facilityType === "贸易站") {
-                const teamSet = new Set(validTeam);
-                for (let combo of TRADE_COMBOS) {
-                    if (combo.required.every(reqSet => reqSet.some(name => teamSet.has(name)))) {
-                        total += combo.bonus;
-                        break;
-                    }
+            return added;
+        }
+
+        // =====================================================================
+        //  控制中枢分配
+        // =====================================================================
+        function allocateControlCenter(availableSet) {
+            const team = [];
+            const used = new Set();
+            let remaining = 5;
+            const occupied = { trade: false, manufacture: false, liaison: false, mood: false };
+
+            const getFilteredAvailable = () => {
+                const filtered = new Set(availableSet);
+                for (let n of used) filtered.delete(n);
+                for (let n of CENTER_NO_SINGLE) filtered.delete(n);
+                return filtered;
+            };
+
+            // 优先级1：斩业星熊 + 诗怀雅 + 人力 + 心情
+            const partner1 = getXingXiongPartner(availableSet, used);
+            if (partner1 === '诗怀雅') {
+                team.push('斩业星熊'); used.add('斩业星熊'); occupied.manufacture = true;
+                team.push('诗怀雅'); used.add('诗怀雅'); occupied.trade = true;
+                remaining -= 2;
+                const filtered = getFilteredAvailable();
+                let liaisonPick = null;
+                if (filtered.has('焰狐龙梓兰') && !used.has('焰狐龙梓兰')) liaisonPick = '焰狐龙梓兰';
+                else if (filtered.has('八幡海铃') && !used.has('八幡海铃')) liaisonPick = '八幡海铃';
+                if (liaisonPick) { team.push(liaisonPick); used.add(liaisonPick); occupied.liaison = true; remaining--; }
+                if (remaining > 0) {
+                    const moodAdded = fillMood(availableSet, used, remaining, []);
+                    team.push(...moodAdded); remaining -= moodAdded.length; occupied.mood = true;
                 }
-            } else if (facilityType === "制造站") {
-                const teamSet = new Set(validTeam);
-                const combos = product === "赤金" ? AK_COMBOS : (product === "源石材料" ? ORI_COMBOS :
-                EXPERIENCE_COMBOS);
-                for (let combo of combos) {
-                    if (combo.required.every(reqSet => reqSet.some(name => teamSet.has(name)))) {
-                        total += combo.bonus;
-                        break;
+                if (remaining === 0) return { team, used };
+            }
+
+            // 优先级2：斩业星熊 + (星熊或陈) + 贸易 + 人力 + 心情
+            const partner2 = getXingXiongPartner(availableSet, used);
+            if (partner2 === '星熊' || partner2 === '陈') {
+                team.push('斩业星熊'); used.add('斩业星熊'); occupied.manufacture = true;
+                team.push(partner2); used.add(partner2); remaining -= 2;
+                const filtered = getFilteredAvailable();
+                let tradePick = null;
+                for (let name of CENTER_TRADE_OPS) {
+                    if (filtered.has(name) && !used.has(name)) { tradePick = name; break; }
+                }
+                if (tradePick) { team.push(tradePick); used.add(tradePick); occupied.trade = true; remaining--; }
+                let liaisonPick = null;
+                if (filtered.has('焰狐龙梓兰') && !used.has('焰狐龙梓兰')) liaisonPick = '焰狐龙梓兰';
+                else if (filtered.has('八幡海铃') && !used.has('八幡海铃')) liaisonPick = '八幡海铃';
+                if (liaisonPick) { team.push(liaisonPick); used.add(liaisonPick); occupied.liaison = true; remaining--; }
+                if (remaining > 0) {
+                    const moodAdded = fillMood(availableSet, used, remaining, []);
+                    team.push(...moodAdded); remaining -= moodAdded.length; occupied.mood = true;
+                }
+                if (remaining === 0) return { team, used };
+            }
+
+            // 优先级3：丰川祥子五人组
+            if (CENTER_FIXED_COMBO.every(name => availableSet.has(name) && !used.has(name))) {
+                for (let name of CENTER_FIXED_COMBO) { team.push(name); used.add(name); remaining--; }
+                if (remaining === 0) return { team, used };
+            }
+
+            // 优先级4：阿米娅 + 魔王 + 维什戴尔 + 制造 + 人力
+            if (CENTER_AMYIA_COMBO.every(name => availableSet.has(name) && !used.has(name))) {
+                for (let name of CENTER_AMYIA_COMBO) { team.push(name); used.add(name); remaining--; }
+                occupied.trade = true; occupied.mood = true;
+                const filtered = getFilteredAvailable();
+                let manuPick = null;
+                for (let name of CENTER_MANUFACTURE_OPS) {
+                    if (name === '斩业星熊') continue;
+                    if (filtered.has(name) && !used.has(name)) { manuPick = name; break; }
+                }
+                if (manuPick) { team.push(manuPick); used.add(manuPick); occupied.manufacture = true; remaining--; }
+                let liaisonPick = null;
+                if (filtered.has('焰狐龙梓兰') && !used.has('焰狐龙梓兰')) liaisonPick = '焰狐龙梓兰';
+                else if (filtered.has('八幡海铃') && !used.has('八幡海铃')) liaisonPick = '八幡海铃';
+                if (liaisonPick) { team.push(liaisonPick); used.add(liaisonPick); occupied.liaison = true; remaining--; }
+                if (remaining > 0) {
+                    const moodAdded = fillMood(availableSet, used, remaining, ['维什戴尔', '魔王']);
+                    team.push(...moodAdded); remaining -= moodAdded.length;
+                }
+                if (remaining === 0) return { team, used };
+            }
+
+            // 优先级5：兜底补齐
+            const filteredFinal = getFilteredAvailable();
+            if (!occupied.trade && remaining > 0) {
+                for (let name of CENTER_TRADE_OPS) {
+                    if (filteredFinal.has(name) && !used.has(name)) {
+                        team.push(name); used.add(name); remaining--; occupied.trade = true; break;
                     }
                 }
             }
-            return total;
+            if (!occupied.manufacture && remaining > 0) {
+                for (let name of CENTER_MANUFACTURE_OPS) {
+                    if (name === '斩业星熊') continue;
+                    if (filteredFinal.has(name) && !used.has(name)) {
+                        team.push(name); used.add(name); remaining--; occupied.manufacture = true; break;
+                    }
+                }
+            }
+            if (!occupied.liaison && remaining > 0) {
+                let liaisonPick = null;
+                if (filteredFinal.has('焰狐龙梓兰') && !used.has('焰狐龙梓兰')) liaisonPick = '焰狐龙梓兰';
+                else if (filteredFinal.has('八幡海铃') && !used.has('八幡海铃')) liaisonPick = '八幡海铃';
+                if (liaisonPick) { team.push(liaisonPick); used.add(liaisonPick); remaining--; occupied.liaison = true; }
+            }
+            if (!occupied.mood && remaining > 0) {
+                const moodAdded = fillMood(availableSet, used, remaining, []);
+                team.push(...moodAdded); remaining -= moodAdded.length;
+            }
+
+            return { team, used };
+        }
+
+        // =====================================================================
+        //  ★★★ 修改：分配贸易站时支持禁用指定干员 ★★★
+        // =====================================================================
+        function allocateTradeWithForbidden(availableSet, numStations, forbiddenSet = new Set()) {
+            // 从可用集合中移除被禁用的干员（仅针对此贸易站）
+            const filteredAvailable = new Set([...availableSet].filter(name => !forbiddenSet.has(name)));
+            return allocateTrade(filteredAvailable, numStations);
         }
 
         function allocateTrade(availableSet, numStations) {
             const used = new Set();
             const teams = [];
             const available = new Set(availableSet);
-
             for (let combo of TRADE_COMBOS) {
                 if (teams.length >= numStations) break;
-                let chosen = [],
-                    possible = true;
+                let chosen = [], possible = true;
                 for (let reqSet of combo.required) {
                     let found = null;
                     for (let name of reqSet) {
@@ -1311,11 +700,9 @@
                 }
                 if (possible) {
                     teams.push(chosen);
-                    chosen.forEach(n => { used.add(n);
-                        available.delete(n); });
+                    chosen.forEach(n => { used.add(n); available.delete(n); });
                 }
             }
-
             while (teams.length < numStations) {
                 let team = null;
                 const getHighEfficiency = (exclude) => {
@@ -1333,29 +720,24 @@
                     candidates.sort((a, b) => b.base - a.base || a.name.localeCompare(b.name));
                     return candidates.map(c => c.name);
                 };
-
                 if (available.has('但书') && !used.has('但书') && !SINGLE_HANG_FORBIDDEN.has('但书')) {
                     const high = getHighEfficiency(new Set(['但书']));
                     if (high.length >= 2) {
                         team = ['但书', high[0], high[1]];
                         teams.push(team);
-                        team.forEach(n => { used.add(n);
-                            available.delete(n); });
+                        team.forEach(n => { used.add(n); available.delete(n); });
                         continue;
                     }
                 }
-
                 if (available.has('可露希尔') && !used.has('可露希尔') && !SINGLE_HANG_FORBIDDEN.has('可露希尔')) {
                     const high = getHighEfficiency(new Set(['可露希尔']));
                     if (high.length >= 2) {
                         team = ['可露希尔', high[0], high[1]];
                         teams.push(team);
-                        team.forEach(n => { used.add(n);
-                            available.delete(n); });
+                        team.forEach(n => { used.add(n); available.delete(n); });
                         continue;
                     }
                 }
-
                 let pairTeam = null;
                 for (let pair of TRADE_PAIRS) {
                     const [a, b] = pair;
@@ -1368,12 +750,10 @@
                         .sort((x, y) => {
                             const idxX = TRADE_TIERS.findIndex(t => t.includes(x));
                             const idxY = TRADE_TIERS.findIndex(t => t.includes(y));
-                            if (idxX === -1 && idxY === -1) return getBaseEff(y, "通用", "贸易站") - getBaseEff(x,
-                            "通用", "贸易站");
+                            if (idxX === -1 && idxY === -1) return getBaseEff(y, "通用", "贸易站") - getBaseEff(x, "通用", "贸易站");
                             if (idxX === -1) return 1;
                             if (idxY === -1) return -1;
-                            return idxX - idxY || getBaseEff(y, "通用", "贸易站") - getBaseEff(x, "通用",
-                            "贸易站");
+                            return idxX - idxY || getBaseEff(y, "通用", "贸易站") - getBaseEff(x, "通用", "贸易站");
                         })[0];
                         if (third) pairTeam = [a, b, third];
                         else pairTeam = [a, b];
@@ -1382,32 +762,40 @@
                 }
                 if (pairTeam) {
                     teams.push(pairTeam);
-                    pairTeam.forEach(n => { used.add(n);
-                        available.delete(n); });
+                    pairTeam.forEach(n => { used.add(n); available.delete(n); });
                     continue;
                 }
-
                 const candidates = [];
                 for (let tier of TRADE_TIERS) {
                     for (let name of tier) {
-                        if (available.has(name) && !used.has(name) && (OPERATORS[name].facility === "贸易站" || name ===
-                                '芬') && !SINGLE_HANG_FORBIDDEN.has(name)) {
+                        if (available.has(name) && !used.has(name) && (OPERATORS[name].facility === "贸易站" || name === '芬') && !SINGLE_HANG_FORBIDDEN.has(name)) {
                             candidates.push(name);
                         }
                     }
                 }
-                const rest = [...available].filter(n => !used.has(n) && (OPERATORS[n].facility === "贸易站" || n === '芬') &&
-                    !SINGLE_HANG_FORBIDDEN.has(n))
+                const rest = [...available].filter(n => !used.has(n) && (OPERATORS[n].facility === "贸易站" || n === '芬') && !SINGLE_HANG_FORBIDDEN.has(n))
                     .sort((a, b) => getBaseEff(b, "通用", "贸易站") - getBaseEff(a, "通用", "贸易站"));
-                for (let n of rest)
-                    if (!candidates.includes(n)) candidates.push(n);
+                for (let n of rest) if (!candidates.includes(n)) candidates.push(n);
                 const teamFinal = candidates.slice(0, 3);
                 if (teamFinal.length === 0) teams.push(["无合适干员"]);
-                else { teams.push(teamFinal);
-                    teamFinal.forEach(n => { used.add(n);
-                        available.delete(n); }); }
+                else { teams.push(teamFinal); teamFinal.forEach(n => { used.add(n); available.delete(n); }); }
             }
             return { teams, used };
+        }
+
+        // =====================================================================
+        //  其他制造站分配函数（不变）
+        // =====================================================================
+        function getBaseEff(name, product, facilityType) {
+            const op = OPERATORS[name];
+            if (!op) return 0;
+            if (name === '芬') {
+                if (facilityType === '贸易站') return 0.15;
+                if (facilityType === '制造站' && product === '通用') return 0.20;
+                return 0.20;
+            }
+            if (product && op.product !== "通用" && op.product !== product) return 0;
+            return op.base;
         }
 
         function allocateProduct(availableSet, combos, product, numStations) {
@@ -1416,8 +804,7 @@
             const available = new Set(availableSet);
             for (let combo of combos) {
                 if (teams.length >= numStations) break;
-                let chosen = [],
-                    possible = true;
+                let chosen = [], possible = true;
                 for (let reqSet of combo.required) {
                     let found = null;
                     for (let name of reqSet) {
@@ -1428,8 +815,7 @@
                 }
                 if (possible) {
                     teams.push(chosen);
-                    chosen.forEach(n => { used.add(n);
-                        available.delete(n); });
+                    chosen.forEach(n => { used.add(n); available.delete(n); });
                 }
             }
             while (teams.length < numStations) {
@@ -1455,9 +841,7 @@
                     team = team.concat(genericCandidates.slice(0, needed));
                 }
                 if (team.length === 0) teams.push(["无合适干员"]);
-                else { teams.push(team);
-                    team.forEach(n => { used.add(n);
-                        available.delete(n); }); }
+                else { teams.push(team); team.forEach(n => { used.add(n); available.delete(n); }); }
             }
             return { teams, used };
         }
@@ -1468,8 +852,7 @@
             const available = new Set(availableSet);
             for (let combo of ORI_COMBOS) {
                 if (teams.length >= numStations) break;
-                let chosen = [],
-                    possible = true;
+                let chosen = [], possible = true;
                 for (let reqSet of combo.required) {
                     let found = null;
                     for (let name of reqSet) {
@@ -1480,8 +863,7 @@
                 }
                 if (possible) {
                     teams.push(chosen);
-                    chosen.forEach(n => { used.add(n);
-                        available.delete(n); });
+                    chosen.forEach(n => { used.add(n); available.delete(n); });
                 }
             }
             while (teams.length < numStations) {
@@ -1521,56 +903,69 @@
                     }
                 }
                 if (!team || team.length === 0) teams.push(["无合适干员"]);
-                else { teams.push(team);
-                    team.forEach(n => { used.add(n);
-                        available.delete(n); }); }
+                else { teams.push(team); team.forEach(n => { used.add(n); available.delete(n); }); }
             }
             return { teams, used };
         }
 
-        function fullAllocation(owned, tradeCount, akCount, oriCount, expCount) {
+        // =====================================================================
+        //  ★★★ 修改：fullAllocation 支持按贸易站传入禁用集合 ★★★
+        // =====================================================================
+        function fullAllocationWithTradeForbidden(owned, tradeCount, akCount, oriCount, expCount, tradeForbiddenList = []) {
             const globalAvailable = new Set(owned);
             const assignments = {};
             const usedTotal = new Set();
+
+            // 赤金
             const akRes = allocateProduct(globalAvailable, AK_COMBOS, "赤金", akCount);
             for (let i = 0; i < akCount; i++) assignments[`赤金制造站${i+1}`] = akRes.teams[i] || ["无合适干员"];
-            akRes.used.forEach(n => { usedTotal.add(n);
-                globalAvailable.delete(n); });
+            akRes.used.forEach(n => { usedTotal.add(n); globalAvailable.delete(n); });
+
+            // 源石
             const oriRes = allocateOriginium(globalAvailable, oriCount);
             for (let i = 0; i < oriCount; i++) assignments[`源石制造站${i+1}`] = oriRes.teams[i] || ["无合适干员"];
-            oriRes.used.forEach(n => { usedTotal.add(n);
-                globalAvailable.delete(n); });
-            const tradeRes = allocateTrade(globalAvailable, tradeCount);
-            for (let i = 0; i < tradeCount; i++) assignments[`贸易站${i+1}`] = tradeRes.teams[i] || ["无合适干员"];
-            tradeRes.used.forEach(n => { usedTotal.add(n);
-                globalAvailable.delete(n); });
+            oriRes.used.forEach(n => { usedTotal.add(n); globalAvailable.delete(n); });
+
+            // ★★★ 贸易站（逐个分配，支持每个站不同的禁用集合） ★★★
+            for (let i = 0; i < tradeCount; i++) {
+                const forbidden = (i < tradeForbiddenList.length) ? tradeForbiddenList[i] : new Set();
+                const tradeRes = allocateTradeWithForbidden(globalAvailable, 1, forbidden);
+                assignments[`贸易站${i+1}`] = tradeRes.teams[0] || ["无合适干员"];
+                tradeRes.used.forEach(n => { usedTotal.add(n); globalAvailable.delete(n); });
+            }
+
+            // 经验
             const expRes = allocateProduct(globalAvailable, EXPERIENCE_COMBOS, "经验", expCount);
             for (let i = 0; i < expCount; i++) assignments[`经验制造站${i+1}`] = expRes.teams[i] || ["无合适干员"];
-            expRes.used.forEach(n => { usedTotal.add(n);
-                globalAvailable.delete(n); });
+            expRes.used.forEach(n => { usedTotal.add(n); globalAvailable.delete(n); });
+
             return { assignments, used: usedTotal, unused: [...globalAvailable] };
         }
 
-        function assignBothShifts(owned, tradeCount, akCount, oriCount, expCount) {
-            const first = fullAllocation(owned, tradeCount, akCount, oriCount, expCount);
+        function assignBothShiftsWithTradeForbidden(owned, tradeCount, akCount, oriCount, expCount, tradeForbiddenList = []) {
+            const first = fullAllocationWithTradeForbidden(owned, tradeCount, akCount, oriCount, expCount, tradeForbiddenList);
             const remaining = owned.filter(op => !first.used.has(op));
-            const second = fullAllocation(remaining, tradeCount, akCount, oriCount, expCount);
+            const second = fullAllocationWithTradeForbidden(remaining, tradeCount, akCount, oriCount, expCount, tradeForbiddenList);
             return { first, second };
         }
 
-        // =====================================================================
-        //  头像辅助 - 使用本地 picture 文件夹
-        // =====================================================================
-
-        function getAvatarUrl(name) {
-            return 'picture/' + name + '.jpg';
+        // 保留原函数以兼容
+        function fullAllocation(owned, tradeCount, akCount, oriCount, expCount) {
+            return fullAllocationWithTradeForbidden(owned, tradeCount, akCount, oriCount, expCount, []);
         }
+
+        function assignBothShifts(owned, tradeCount, akCount, oriCount, expCount) {
+            return assignBothShiftsWithTradeForbidden(owned, tradeCount, akCount, oriCount, expCount, []);
+        }
+
+        // =====================================================================
+        //  头像辅助
+        // =====================================================================
+        function getAvatarUrl(name) { return 'picture/' + name + '.jpg'; }
 
         // =====================================================================
         //  UI 交互
         // =====================================================================
-
-        const FORBIDDEN_IN_333 = new Set(["可露希尔", "但书", "巫恋"]);
         let selectedOps = new Set();
         let currentLayout = '243';
         let currentFilter = 'all';
@@ -1598,6 +993,7 @@
         function getOpColorClass(name) {
             const op = OPERATORS[name];
             if (!op) return 'color-默认';
+            if (op.facility === '控制中枢') return 'color-中枢';
             if (op.facility === '贸易站') return 'color-trade';
             if (op.product === '赤金') return 'color-赤金';
             if (op.product === '经验') return 'color-经验';
@@ -1609,6 +1005,7 @@
         function getOpTag(name) {
             const op = OPERATORS[name];
             if (!op) return '';
+            if (op.facility === '控制中枢') return '中枢';
             if (op.facility === '贸易站') return '贸易';
             return op.product === '通用' ? '通用' : op.product;
         }
@@ -1623,6 +1020,7 @@
                 if (query && !name.toLowerCase().includes(query)) return false;
                 const op = OPERATORS[name];
                 if (!op) return false;
+                if (filter === '中枢') { if (op.facility !== '控制中枢') return false; }
                 if (filter === '贸易站') {
                     if (name === '芬') return true;
                     if (op.facility !== '贸易站') return false;
@@ -1646,15 +1044,14 @@
             });
 
             if (filtered.length === 0) {
-                opGrid.innerHTML =
-                    `<div class="empty-state" style="grid-column:1/-1;"><span class="icon">🔍</span>没有匹配的干员</div>`;
+                opGrid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><span class="icon">🔍</span>没有匹配的干员</div>`;
                 return;
             }
 
             let html = '';
             for (let name of filtered) {
                 const isSelected = selectedOps.has(name);
-                const isForbidden = FORBIDDEN_IN_333.has(name) && currentLayout === '333';
+                const isForbidden = false;
                 const colorClass = getOpColorClass(name);
                 const tag = getOpTag(name);
                 const initial = name.charAt(0).toUpperCase();
@@ -1667,8 +1064,7 @@
 
                 let avatarHtml = '';
                 if (avatarUrl) {
-                    avatarHtml =
-                        `<img src="${avatarUrl}" alt="${name}" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\\'fallback-text\\'>${initial}</span>'; this.parentElement.style.background='';">`;
+                    avatarHtml = `<img src="${avatarUrl}" alt="${name}" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\\'fallback-text\\'>${initial}</span>'; this.parentElement.style.background='';">`;
                 } else {
                     avatarHtml = `<span class="fallback-text">${initial}</span>`;
                 }
@@ -1680,14 +1076,14 @@
                 const metaHtml = metaParts.join('');
 
                 html += `
-                        <div class="op-card ${isSelected ? 'selected' : ''} ${isForbidden ? 'disabled' : ''}" data-op="${name}">
-                            <span class="check-mark">✓</span>
-                            <div class="op-avatar ${colorClass}">${avatarHtml}</div>
-                            <div class="op-name">${name}</div>
-                            <div class="op-meta">${metaHtml}</div>
-                            ${tag ? `<div class="op-tag">${tag}</div>` : ''}
-                        </div>
-                    `;
+                    <div class="op-card ${isSelected ? 'selected' : ''} ${isForbidden ? 'disabled' : ''}" data-op="${name}">
+                        <span class="check-mark">✓</span>
+                        <div class="op-avatar ${colorClass}">${avatarHtml}</div>
+                        <div class="op-name">${name}</div>
+                        <div class="op-meta">${metaHtml}</div>
+                        ${tag ? `<div class="op-tag">${tag}</div>` : ''}
+                    </div>
+                `;
             }
             opGrid.innerHTML = html;
 
@@ -1706,8 +1102,6 @@
         }
 
         function toggleOp(name) {
-            const isForbidden = FORBIDDEN_IN_333.has(name) && currentLayout === '333';
-            if (isForbidden) return;
             if (selectedOps.has(name)) selectedOps.delete(name);
             else selectedOps.add(name);
             renderGrid();
@@ -1715,10 +1109,7 @@
         }
 
         function selectAll() {
-            const available = allOpNames.filter(name => {
-                if (FORBIDDEN_IN_333.has(name) && currentLayout === '333') return false;
-                return true;
-            });
+            const available = allOpNames;
             if (selectedOps.size === available.length) selectedOps.clear();
             else available.forEach(n => selectedOps.add(n));
             renderGrid();
@@ -1726,10 +1117,7 @@
         }
 
         function invertSelect() {
-            const available = allOpNames.filter(name => {
-                if (FORBIDDEN_IN_333.has(name) && currentLayout === '333') return false;
-                return true;
-            });
+            const available = allOpNames;
             const newSet = new Set();
             for (let name of available) {
                 if (!selectedOps.has(name)) newSet.add(name);
@@ -1746,7 +1134,6 @@
         }
 
         let toastTimer = null;
-
         function showToast(msg, duration = 2000) {
             toastEl.textContent = msg;
             toastEl.classList.add('show');
@@ -1759,11 +1146,6 @@
             layoutBtns.forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.layout === layout);
             });
-            if (layout === '333') {
-                for (let name of FORBIDDEN_IN_333) {
-                    if (selectedOps.has(name)) selectedOps.delete(name);
-                }
-            }
             renderGrid();
             updateGenerateBtn();
             showToast(`切换到 ${layout === '243' ? '243（2贸易 4制造）' : '333（3贸易 3制造）'}`, 1200);
@@ -1799,9 +1181,8 @@
         }
 
         // =====================================================================
-        //  生成排班结果（可视化）
+        //  ★★★ 修改：生成排班结果（支持贸易站标签和禁用） ★★★
         // =====================================================================
-
         function generatePlan() {
             const owned = Array.from(selectedOps);
             if (owned.length === 0) {
@@ -1810,92 +1191,150 @@
             }
 
             let tradeCount, akCount, oriCount, expCount, strategy;
+            // 用于存储每个贸易站的标签和禁用集合
+            let tradeLabels = [];
+            let tradeForbiddenList = [];
+
             if (currentLayout === '243') {
-                tradeCount = 2;
-                akCount = 2;
-                oriCount = 0;
-                expCount = 2;
+                tradeCount = 2; akCount = 2; oriCount = 0; expCount = 2;
                 strategy = '龙门商法（全部贸易站）';
+                // 243：所有贸易站都是龙门商法，不禁用任何干员
+                tradeLabels = ['龙门商法', '龙门商法'];
+                tradeForbiddenList = [new Set(), new Set()];
             } else {
-                tradeCount = 3;
-                akCount = 2;
-                oriCount = 1;
-                expCount = 0;
+                tradeCount = 3; akCount = 2; oriCount = 1; expCount = 0;
                 strategy = '2龙门商法 + 1开采协力';
+                // 333：第一个贸易站为开采协力，禁用 但书、可露希尔、巫恋
+                // 其余两个为龙门商法，不禁用
+                tradeLabels = ['开采协力', '龙门商法', '龙门商法'];
+                tradeForbiddenList = [
+                    new Set(['但书', '可露希尔', '巫恋']),
+                    new Set(),
+                    new Set()
+                ];
             }
 
-            const { first, second } = assignBothShifts(owned, tradeCount, akCount, oriCount, expCount);
+            // 分配控制中枢（两班）
+            let availableSet = new Set(owned);
+            const center1 = allocateControlCenter(availableSet);
+            const centerUsed1 = center1.used;
+            centerUsed1.forEach(name => availableSet.delete(name));
+
+            const center2 = allocateControlCenter(availableSet);
+            const centerUsed2 = center2.used;
+            centerUsed2.forEach(name => availableSet.delete(name));
+
+            const remaining = Array.from(availableSet);
+
+            // ★★★ 使用支持禁用列表的分配函数 ★★★
+            const { first, second } = assignBothShiftsWithTradeForbidden(
+                remaining,
+                tradeCount,
+                akCount,
+                oriCount,
+                expCount,
+                tradeForbiddenList
+            );
 
             function buildOperatorHtml(name) {
-                if (name === '无合适干员') {
-                    return `<span class="result-placeholder">无合适干员</span>`;
-                }
+                if (name === '无合适干员') return `<span class="result-placeholder">无合适干员</span>`;
                 const op = OPERATORS[name];
-                if (!op) {
-                    return `<span class="result-placeholder">${name}</span>`;
-                }
+                if (!op) return `<span class="result-placeholder">${name}</span>`;
                 const avatarUrl = getAvatarUrl(name);
                 const starStr = op.star ? '★'.repeat(op.star) : '';
                 const classTag = op.class || '';
                 const eliteTag = op.elite || '';
                 const initial = name.charAt(0).toUpperCase();
-
                 let avatarHtml = '';
                 if (avatarUrl) {
-                    avatarHtml =
-                        `<img src="${avatarUrl}" alt="${name}" onerror="this.parentElement.innerHTML='<span class=\\'fallback\\'>${initial}</span>'; this.parentElement.style.background='';">`;
+                    avatarHtml = `<img src="${avatarUrl}" alt="${name}" onerror="this.parentElement.innerHTML='<span class=\\'fallback\\'>${initial}</span>'; this.parentElement.style.background='';">`;
                 } else {
                     avatarHtml = `<span class="fallback">${initial}</span>`;
                 }
-
                 return `
-                        <span class="result-operator">
-                            <span class="result-avatar">${avatarHtml}</span>
-                            <span class="result-info">
-                                <span class="rname" title="${name}">${name}</span>
-                                ${starStr ? `<span class="rstar">${starStr}</span>` : ''}
-                                ${classTag ? `<span class="rclass">${classTag}</span>` : ''}
-                                ${eliteTag ? `<span class="relite">${eliteTag}</span>` : ''}
-                            </span>
+                    <span class="result-operator">
+                        <span class="result-avatar">${avatarHtml}</span>
+                        <span class="result-info">
+                            <span class="rname" title="${name}">${name}</span>
+                            ${starStr ? `<span class="rstar">${starStr}</span>` : ''}
+                            ${classTag ? `<span class="rclass">${classTag}</span>` : ''}
+                            ${eliteTag ? `<span class="relite">${eliteTag}</span>` : ''}
                         </span>
-                    `;
+                    </span>
+                `;
             }
 
             let resultHtml = `<div class="result-strategy">📋 策略：${strategy}</div>`;
 
-            const order = [];
-            for (let i = 1; i <= tradeCount; i++) order.push(`贸易站${i}`);
-            for (let i = 1; i <= akCount; i++) order.push(`赤金制造站${i}`);
-            for (let i = 1; i <= oriCount; i++) order.push(`源石制造站${i}`);
-            for (let i = 1; i <= expCount; i++) order.push(`经验制造站${i}`);
+            // 控制中枢展示
+            resultHtml += `
+                <div class="result-station">
+                    <div class="station-title">🏢 控制中枢</div>
+                    <div class="shift-row">
+                        <span class="shift-label">第1班：</span>
+                        ${center1.team.map(name => buildOperatorHtml(name)).join('')}
+                        ${center1.team.length < 5 ? `<span class="result-placeholder">（空余${5 - center1.team.length}个位置）</span>` : ''}
+                    </div>
+                    <div class="shift-row">
+                        <span class="shift-label">第2班：</span>
+                        ${center2.team.map(name => buildOperatorHtml(name)).join('')}
+                        ${center2.team.length < 5 ? `<span class="result-placeholder">（空余${5 - center2.team.length}个位置）</span>` : ''}
+                    </div>
+                </div>
+            `;
 
-            for (let label of order) {
+            // ★★★ 贸易站展示（带标签） ★★★
+            const order = [];
+            for (let i = 1; i <= tradeCount; i++) {
+                order.push({ label: `贸易站${i}`, tag: tradeLabels[i-1] || '龙门商法' });
+            }
+            for (let i = 1; i <= akCount; i++) order.push({ label: `赤金制造站${i}`, tag: '' });
+            for (let i = 1; i <= oriCount; i++) order.push({ label: `源石制造站${i}`, tag: '' });
+            for (let i = 1; i <= expCount; i++) order.push({ label: `经验制造站${i}`, tag: '' });
+
+            for (let item of order) {
+                const label = item.label;
+                const tag = item.tag;
                 const team1 = first.assignments[label] || ["无合适干员"];
                 const team2 = second.assignments[label] || ["无合适干员"];
 
+                // 根据标签添加样式类
+                let tagClass = '';
+                let tagDisplay = '';
+                if (tag === '开采协力') {
+                    tagClass = 'station-tag cooperation';
+                    tagDisplay = '⛏ 开采协力';
+                } else if (tag === '龙门商法') {
+                    tagClass = 'station-tag longmen';
+                    tagDisplay = '🏛 龙门商法';
+                }
+
                 resultHtml += `
-                        <div class="result-station">
-                            <div class="station-title">${label}</div>
-                            <div class="shift-row">
-                                <span class="shift-label">第1班：</span>
-                                ${team1.map(name => buildOperatorHtml(name)).join('')}
-                            </div>
-                            <div class="shift-row">
-                                <span class="shift-label">第2班：</span>
-                                ${team2.map(name => buildOperatorHtml(name)).join('')}
-                            </div>
+                    <div class="result-station">
+                        <div class="station-title">
+                            ${label}
+                            ${tagDisplay ? `<span class="${tagClass}">${tagDisplay}</span>` : ''}
                         </div>
-                    `;
+                        <div class="shift-row">
+                            <span class="shift-label">第1班：</span>
+                            ${team1.map(name => buildOperatorHtml(name)).join('')}
+                        </div>
+                        <div class="shift-row">
+                            <span class="shift-label">第2班：</span>
+                            ${team2.map(name => buildOperatorHtml(name)).join('')}
+                        </div>
+                    </div>
+                `;
             }
 
-            const allUsed = new Set([...first.used, ...second.used]);
+            const allUsed = new Set([...centerUsed1, ...centerUsed2, ...first.used, ...second.used]);
             const unused = owned.filter(op => !allUsed.has(op));
             if (unused.length > 0) {
                 resultHtml += `
-                        <div class="result-unused">
-                            完全未使用的干员：<span>${unused.join('、')}</span>
-                        </div>
-                    `;
+                    <div class="result-unused">
+                        完全未使用的干员：<span>${unused.join('、')}</span>
+                    </div>
+                `;
             }
 
             resultEl.innerHTML = resultHtml;
@@ -1907,7 +1346,6 @@
         // =====================================================================
         //  初始化
         // =====================================================================
-
         document.addEventListener('DOMContentLoaded', () => {
             setLayout('243');
 
