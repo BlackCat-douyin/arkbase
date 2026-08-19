@@ -242,7 +242,7 @@
         const FIXED_ONLY_OPS = new Set([
             "火神", "泡泡", "多萝西", "娜斯提", "温蒂", "冬时", "森蚺", "槐琥", "贝娜",
             "Miss.Christine", "圣约送葬人", "卡达", "豆苗", "蛇屠箱", "黑角", "引星棘刺", "褐果",
-            "蕾缪安", "龙舌兰", "柏喙", "卡夫卡", "明椒", "折光", "琳琅诗怀雅",
+            "蕾缪安", "柏喙", "卡夫卡", "明椒", "折光", "琳琅诗怀雅",
             "伺夜", "空弦", "深巡", "吉星", "石英", "维娜·维多利亚", "空爆", "月见夜", "古米", "齐尔查克",
             "慕斯", "夜刀", "玫兰莎", "梓兰", "远山", "焰狐龙梓兰", "雷狼龙S空爆", "推进之王", "摩根", "贝洛内",
             "丰川祥子", "三角初华", "若叶睦", "祐天寺若麦"
@@ -251,10 +251,9 @@
         const SINGLE_HANG_FORBIDDEN = new Set([
             "卡夫卡", "柏喙", "贝洛内", "德克萨斯", "拉普兰德",
             "孑", "明椒", "摩根", "推进之王", "琳琅诗怀雅", "崖心", "折光",
-            "红云", "火神"
+            "红云", "火神", "龙舌兰"
         ]);
 
-        // ★★★ 干员选择阶段不再禁用任何干员 ★★★
         const FORBIDDEN_IN_333 = new Set([]);
 
         const CENTER_NO_SINGLE = new Set([
@@ -440,26 +439,32 @@
         for (let name of removeElite) { if (OPERATORS[name]) delete OPERATORS[name].elite; }
 
         // =====================================================================
-        //  组合数据
+        //  ★★★ 组合数据 ★★★
         // =====================================================================
 
-        // 赤金组合（6组）
+        // ===== 赤金组合（7组，新增第7组：水月 + 任意两个通用干员） =====
         const AK_COMBOS = [
             { required: [["清流"], ["温蒂"], ["冬时", "森蚺"]], bonus: 0.25 },
             { required: [["苍苔"], ["引星棘刺"], ["夜烟", "斑点"]], bonus: 0.25 },
             { required: [["苍苔"], ["斑点"], ["夜烟"]], bonus: 0.20 },
             { required: [["阿罗玛"], ["槐琥"], ["砾"]], bonus: 0.20 },
             { required: [["多萝西"], ["娜斯提"], ["淬羽赫默"]], bonus: 0.25 },
-            { required: [["火神"], ["泡泡"], ["贝娜"]], bonus: 0.25 }
+            { required: [["火神"], ["泡泡"], ["贝娜"]], bonus: 0.25 },
+            // 第7组：水月 + 任意两个通用干员
+            { required: [["水月"], ["香草", "杰西卡", "调香师", "史都华德", "罗比菈塔"], ["香草", "杰西卡", "调香师", "史都华德", "罗比菈塔"]], bonus: 0.25 }
         ];
 
         const ORI_COMBOS = [{ required: [["火神"], ["泡泡"], ["褐果"]], bonus: 0.25 }];
 
+        // ===== 经验组合（6组，新增第5组：水月 + 任意两个通用干员，原第5下调至第6） =====
         const EXPERIENCE_COMBOS = [
             { required: [["刻俄柏", "帕拉斯"], ["稀音"], ["红云"]], bonus: 0.25 },
             { required: [["酒神"], ["Miss.Christine"], ["红云"]], bonus: 0.20 },
             { required: [["火神"], ["泡泡"], ["圣约送葬人"]], bonus: 0.30 },
             { required: [["火神"], ["泡泡"], ["贝娜"]], bonus: 0.25 },
+            // 第5组：水月 + 任意两个通用干员
+            { required: [["水月"], ["香草", "杰西卡", "调香师", "史都华德", "罗比菈塔"], ["香草", "杰西卡", "调香师", "史都华德", "罗比菈塔"]], bonus: 0.25 },
+            // 第6组：原第5组下调
             { required: [["红云"], ["卡达"], ["豆苗", "黑角", "蛇屠箱"]], bonus: 0.15 }
         ];
 
@@ -482,7 +487,13 @@
             { required: [["维娜·维多利亚"], ["摩根"], ["推进之王"]], bonus: 0.25 }
         ];
 
-        const TRADE_PAIRS = [["伺夜", "贝洛内"], ["蕾缪安", "能天使"], ["焰狐龙梓兰", "雷狼龙S空爆"]];
+        const TRADE_PAIRS = [
+            ["伺夜", "贝洛内"],
+            ["蕾缪安", "能天使"],
+            ["焰狐龙梓兰", "雷狼龙S空爆"],
+            ["崖心", "孑"]
+        ];
+
         const TRADE_TIERS = [
             ["伺夜", "空弦", "深巡", "吉星", "石英"],
             ["能天使", "维娜·维多利亚", "空爆", "月见夜", "古米", "齐尔查克"],
@@ -575,7 +586,6 @@
                 return filtered;
             };
 
-            // 优先级1：斩业星熊 + 诗怀雅 + 人力 + 心情
             const partner1 = getXingXiongPartner(availableSet, used);
             if (partner1 === '诗怀雅') {
                 team.push('斩业星熊'); used.add('斩业星熊'); occupied.manufacture = true;
@@ -593,7 +603,6 @@
                 if (remaining === 0) return { team, used };
             }
 
-            // 优先级2：斩业星熊 + (星熊或陈) + 贸易 + 人力 + 心情
             const partner2 = getXingXiongPartner(availableSet, used);
             if (partner2 === '星熊' || partner2 === '陈') {
                 team.push('斩业星熊'); used.add('斩业星熊'); occupied.manufacture = true;
@@ -615,13 +624,11 @@
                 if (remaining === 0) return { team, used };
             }
 
-            // 优先级3：丰川祥子五人组
             if (CENTER_FIXED_COMBO.every(name => availableSet.has(name) && !used.has(name))) {
                 for (let name of CENTER_FIXED_COMBO) { team.push(name); used.add(name); remaining--; }
                 if (remaining === 0) return { team, used };
             }
 
-            // 优先级4：阿米娅 + 魔王 + 维什戴尔 + 制造 + 人力
             if (CENTER_AMYIA_COMBO.every(name => availableSet.has(name) && !used.has(name))) {
                 for (let name of CENTER_AMYIA_COMBO) { team.push(name); used.add(name); remaining--; }
                 occupied.trade = true; occupied.mood = true;
@@ -643,7 +650,6 @@
                 if (remaining === 0) return { team, used };
             }
 
-            // 优先级5：兜底补齐
             const filteredFinal = getFilteredAvailable();
             if (!occupied.trade && remaining > 0) {
                 for (let name of CENTER_TRADE_OPS) {
@@ -675,14 +681,16 @@
         }
 
         // =====================================================================
-        //  ★★★ 修改：分配贸易站时支持禁用指定干员 ★★★
+        //  贸易站分配
         // =====================================================================
         function allocateTradeWithForbidden(availableSet, numStations, forbiddenSet = new Set()) {
-            // 从可用集合中移除被禁用的干员（仅针对此贸易站）
             const filteredAvailable = new Set([...availableSet].filter(name => !forbiddenSet.has(name)));
             return allocateTrade(filteredAvailable, numStations);
         }
 
+        // =====================================================================
+        //  ★★★ 修复：allocateTrade 组合匹配增加临时去重 ★★★
+        // =====================================================================
         function allocateTrade(availableSet, numStations) {
             const used = new Set();
             const teams = [];
@@ -690,13 +698,18 @@
             for (let combo of TRADE_COMBOS) {
                 if (teams.length >= numStations) break;
                 let chosen = [], possible = true;
+                let tempUsed = new Set(); // 本组合临时使用集合
                 for (let reqSet of combo.required) {
                     let found = null;
                     for (let name of reqSet) {
-                        if (available.has(name) && !used.has(name)) { found = name; break; }
+                        if (available.has(name) && !used.has(name) && !tempUsed.has(name)) {
+                            found = name;
+                            break;
+                        }
                     }
                     if (!found) { possible = false; break; }
                     chosen.push(found);
+                    tempUsed.add(found);
                 }
                 if (possible) {
                     teams.push(chosen);
@@ -784,7 +797,7 @@
         }
 
         // =====================================================================
-        //  其他制造站分配函数（不变）
+        //  制造站分配
         // =====================================================================
         function getBaseEff(name, product, facilityType) {
             const op = OPERATORS[name];
@@ -798,6 +811,9 @@
             return op.base;
         }
 
+        // =====================================================================
+        //  ★★★ 修复：allocateProduct 组合匹配增加临时去重 ★★★
+        // =====================================================================
         function allocateProduct(availableSet, combos, product, numStations) {
             const used = new Set();
             const teams = [];
@@ -805,13 +821,18 @@
             for (let combo of combos) {
                 if (teams.length >= numStations) break;
                 let chosen = [], possible = true;
+                let tempUsed = new Set(); // 本组合临时使用集合
                 for (let reqSet of combo.required) {
                     let found = null;
                     for (let name of reqSet) {
-                        if (available.has(name) && !used.has(name)) { found = name; break; }
+                        if (available.has(name) && !used.has(name) && !tempUsed.has(name)) {
+                            found = name;
+                            break;
+                        }
                     }
                     if (!found) { possible = false; break; }
                     chosen.push(found);
+                    tempUsed.add(found);
                 }
                 if (possible) {
                     teams.push(chosen);
@@ -846,40 +867,69 @@
             return { teams, used };
         }
 
+        // =====================================================================
+        //  源石材料分配（搓玉）
+        // =====================================================================
         function allocateOriginium(availableSet, numStations) {
             const used = new Set();
             const teams = [];
             const available = new Set(availableSet);
+
             for (let combo of ORI_COMBOS) {
                 if (teams.length >= numStations) break;
                 let chosen = [], possible = true;
+                let tempUsed = new Set();
                 for (let reqSet of combo.required) {
                     let found = null;
                     for (let name of reqSet) {
-                        if (available.has(name) && !used.has(name)) { found = name; break; }
+                        if (available.has(name) && !used.has(name) && !tempUsed.has(name)) {
+                            found = name;
+                            break;
+                        }
                     }
                     if (!found) { possible = false; break; }
                     chosen.push(found);
+                    tempUsed.add(found);
                 }
                 if (possible) {
                     teams.push(chosen);
                     chosen.forEach(n => { used.add(n); available.delete(n); });
                 }
             }
+
             while (teams.length < numStations) {
                 let team = null;
-                const coreCandidate = ["蛇屠箱", "黑角"].find(n => available.has(n) && !used.has(n) && !SINGLE_HANG_FORBIDDEN.has(n));
+                const coreCandidates = ["蛇屠箱", "黑角"].filter(n => available.has(n) && !used.has(n) && !SINGLE_HANG_FORBIDDEN.has(n));
+                let coreCandidate = coreCandidates[0] || null;
+
                 if (coreCandidate) {
+                    const excludeCore = coreCandidate === "蛇屠箱" ? "黑角" : "蛇屠箱";
                     const otherSource = [...available].filter(n => {
-                        if (used.has(n) || n === coreCandidate) return false;
+                        if (used.has(n) || n === coreCandidate || n === excludeCore) return false;
                         if (FIXED_ONLY_OPS.has(n) && n !== "蛇屠箱" && n !== "黑角") return false;
                         const op = OPERATORS[n];
                         return op && op.facility === "制造站" && op.product === "源石材料";
                     })
                     .filter(n => !SINGLE_HANG_FORBIDDEN.has(n))
                     .sort((a, b) => getBaseEff(b, "源石材料", "制造站") - getBaseEff(a, "源石材料", "制造站"));
-                    if (otherSource.length >= 2) team = [coreCandidate, ...otherSource.slice(0, 2)];
+
+                    if (otherSource.length >= 2) {
+                        team = [coreCandidate, ...otherSource.slice(0, 2)];
+                    } else if (otherSource.length === 1) {
+                        const genericFill = [...available].filter(n => {
+                            if (used.has(n) || n === coreCandidate || n === excludeCore) return false;
+                            if (FIXED_ONLY_OPS.has(n)) return false;
+                            const op = OPERATORS[n];
+                            return op && op.facility === "制造站" && op.product === "通用";
+                        })
+                        .filter(n => !SINGLE_HANG_FORBIDDEN.has(n))
+                        .sort((a, b) => getBaseEff(b, "源石材料", "制造站") - getBaseEff(a, "源石材料", "制造站"));
+                        if (genericFill.length >= 1) {
+                            team = [coreCandidate, ...otherSource.slice(0, 1), genericFill[0]];
+                        }
+                    }
                 }
+
                 if (!team) {
                     const pureSource = [...available].filter(n => {
                         if (used.has(n)) return false;
@@ -889,6 +939,7 @@
                     })
                     .filter(n => !SINGLE_HANG_FORBIDDEN.has(n))
                     .sort((a, b) => getBaseEff(b, "源石材料", "制造站") - getBaseEff(a, "源石材料", "制造站"));
+
                     if (pureSource.length >= 3) {
                         team = pureSource.slice(0, 3);
                     } else {
@@ -902,31 +953,34 @@
                         team = pureSource.concat(genericFill).slice(0, 3);
                     }
                 }
-                if (!team || team.length === 0) teams.push(["无合适干员"]);
-                else { teams.push(team); team.forEach(n => { used.add(n); available.delete(n); }); }
+
+                if (!team || team.length === 0) {
+                    teams.push(["无合适干员"]);
+                } else {
+                    teams.push(team);
+                    team.forEach(n => { used.add(n); available.delete(n); });
+                }
             }
+
             return { teams, used };
         }
 
         // =====================================================================
-        //  ★★★ 修改：fullAllocation 支持按贸易站传入禁用集合 ★★★
+        //  全局分配
         // =====================================================================
         function fullAllocationWithTradeForbidden(owned, tradeCount, akCount, oriCount, expCount, tradeForbiddenList = []) {
             const globalAvailable = new Set(owned);
             const assignments = {};
             const usedTotal = new Set();
 
-            // 赤金
             const akRes = allocateProduct(globalAvailable, AK_COMBOS, "赤金", akCount);
             for (let i = 0; i < akCount; i++) assignments[`赤金制造站${i+1}`] = akRes.teams[i] || ["无合适干员"];
             akRes.used.forEach(n => { usedTotal.add(n); globalAvailable.delete(n); });
 
-            // 源石
             const oriRes = allocateOriginium(globalAvailable, oriCount);
             for (let i = 0; i < oriCount; i++) assignments[`源石制造站${i+1}`] = oriRes.teams[i] || ["无合适干员"];
             oriRes.used.forEach(n => { usedTotal.add(n); globalAvailable.delete(n); });
 
-            // ★★★ 贸易站（逐个分配，支持每个站不同的禁用集合） ★★★
             for (let i = 0; i < tradeCount; i++) {
                 const forbidden = (i < tradeForbiddenList.length) ? tradeForbiddenList[i] : new Set();
                 const tradeRes = allocateTradeWithForbidden(globalAvailable, 1, forbidden);
@@ -934,7 +988,6 @@
                 tradeRes.used.forEach(n => { usedTotal.add(n); globalAvailable.delete(n); });
             }
 
-            // 经验
             const expRes = allocateProduct(globalAvailable, EXPERIENCE_COMBOS, "经验", expCount);
             for (let i = 0; i < expCount; i++) assignments[`经验制造站${i+1}`] = expRes.teams[i] || ["无合适干员"];
             expRes.used.forEach(n => { usedTotal.add(n); globalAvailable.delete(n); });
@@ -949,7 +1002,6 @@
             return { first, second };
         }
 
-        // 保留原函数以兼容
         function fullAllocation(owned, tradeCount, akCount, oriCount, expCount) {
             return fullAllocationWithTradeForbidden(owned, tradeCount, akCount, oriCount, expCount, []);
         }
@@ -1181,7 +1233,7 @@
         }
 
         // =====================================================================
-        //  ★★★ 修改：生成排班结果（支持贸易站标签和禁用） ★★★
+        //  生成排班结果
         // =====================================================================
         function generatePlan() {
             const owned = Array.from(selectedOps);
@@ -1191,21 +1243,17 @@
             }
 
             let tradeCount, akCount, oriCount, expCount, strategy;
-            // 用于存储每个贸易站的标签和禁用集合
             let tradeLabels = [];
             let tradeForbiddenList = [];
 
             if (currentLayout === '243') {
                 tradeCount = 2; akCount = 2; oriCount = 0; expCount = 2;
                 strategy = '龙门商法（全部贸易站）';
-                // 243：所有贸易站都是龙门商法，不禁用任何干员
                 tradeLabels = ['龙门商法', '龙门商法'];
                 tradeForbiddenList = [new Set(), new Set()];
             } else {
                 tradeCount = 3; akCount = 2; oriCount = 1; expCount = 0;
                 strategy = '2龙门商法 + 1开采协力';
-                // 333：第一个贸易站为开采协力，禁用 但书、可露希尔、巫恋
-                // 其余两个为龙门商法，不禁用
                 tradeLabels = ['开采协力', '龙门商法', '龙门商法'];
                 tradeForbiddenList = [
                     new Set(['但书', '可露希尔', '巫恋']),
@@ -1214,7 +1262,6 @@
                 ];
             }
 
-            // 分配控制中枢（两班）
             let availableSet = new Set(owned);
             const center1 = allocateControlCenter(availableSet);
             const centerUsed1 = center1.used;
@@ -1225,8 +1272,6 @@
             centerUsed2.forEach(name => availableSet.delete(name));
 
             const remaining = Array.from(availableSet);
-
-            // ★★★ 使用支持禁用列表的分配函数 ★★★
             const { first, second } = assignBothShiftsWithTradeForbidden(
                 remaining,
                 tradeCount,
@@ -1266,7 +1311,6 @@
 
             let resultHtml = `<div class="result-strategy">📋 策略：${strategy}</div>`;
 
-            // 控制中枢展示
             resultHtml += `
                 <div class="result-station">
                     <div class="station-title">🏢 控制中枢</div>
@@ -1283,7 +1327,6 @@
                 </div>
             `;
 
-            // ★★★ 贸易站展示（带标签） ★★★
             const order = [];
             for (let i = 1; i <= tradeCount; i++) {
                 order.push({ label: `贸易站${i}`, tag: tradeLabels[i-1] || '龙门商法' });
@@ -1298,7 +1341,6 @@
                 const team1 = first.assignments[label] || ["无合适干员"];
                 const team2 = second.assignments[label] || ["无合适干员"];
 
-                // 根据标签添加样式类
                 let tagClass = '';
                 let tagDisplay = '';
                 if (tag === '开采协力') {
